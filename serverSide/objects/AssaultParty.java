@@ -1,5 +1,6 @@
 package serverSide.objects;
 
+import java.rmi.RemoteException;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -7,16 +8,18 @@ import java.util.List;
 import java.util.Map;
 
 import clientSide.entities.MasterThief;
-import clientSide.stubs.GeneralRepositoryStub;
-import serverSide.entities.AssaultPartyProxyAgent;
-import serverSide.main.AssaultPartyMain;
+import clientSide.entities.OrdinaryThief;
+import interfaces.AssaultPartyInterface;
+import interfaces.GeneralRepositoryInterface;
+import interfaces.ReturnBoolean;
+import serverSide.main.AssaultParty0Main;
 import utils.Constants;
 import utils.Room;
 
 /**
  * Assault Party is constituted by Ordinary Thieves that are going to attack the museum.
  */
-public class AssaultParty {
+public class AssaultParty implements AssaultPartyInterface {
     /**
      * List with the identifications of the thieves in the party.
      */
@@ -62,7 +65,7 @@ public class AssaultParty {
     /**
      * The General Repository, where logging happens.
      */
-    private final GeneralRepositoryStub generalRepository;
+    private final GeneralRepositoryInterface generalRepositoryStub;
 
     /**
      * Enumerate for the situation of the Ordinary Thief in the line, can be either front, mid or back.
@@ -75,11 +78,11 @@ public class AssaultParty {
 
     /**
      * Public constructor for the Assault Party shared region.
-     * @param generalRepository the General Repository.
+     * @param generalRepositoryStub the General Repository.
      */
-    public AssaultParty(int id, GeneralRepositoryStub generalRepository) {
+    public AssaultParty(int id, GeneralRepositoryInterface generalRepositoryStub) {
         this.id = id;
-        this.generalRepository = generalRepository;
+        this.generalRepositoryStub = generalRepositoryStub;
         thieves = new LinkedList<>();
         room = null;
         inOperation = false;
@@ -92,69 +95,63 @@ public class AssaultParty {
     /**
      * Called by the Master Thief to send the Assault Party to the museum.
      * After that call, Assault Party can start crawling.
+     * @return the state of the Master Thief after this operation.
      */
-    public synchronized void sendAssaultParty() {
-        AssaultPartyProxyAgent masterThief = (AssaultPartyProxyAgent) Thread.currentThread();
+    public synchronized int sendAssaultParty() {
         while (thieves.size() < Constants.ASSAULT_PARTY_SIZE) {
             try {
                 this.wait();
-            } catch (InterruptedException ignored) {
-
-            }
+            } catch (InterruptedException ignored) {}
         }
         inOperation = true;
         thievesReadyToReverse = 0;
         notifyAll();
-        masterThief.setMasterThiefState(MasterThief.DECIDING_WHAT_TO_DO);
-        generalRepository.setMasterThiefState(masterThief.getMasterThiefState());
+        setMasterThiefState();
+        return MasterThief.DECIDING_WHAT_TO_DO;
     }
 
     /**
      * Called by the Ordinary Thief to crawl in.
      * @return false if they have finished the crawling.
      */
-    public synchronized boolean crawlIn() {
-        AssaultPartyProxyAgent thief = (AssaultPartyProxyAgent) Thread.currentThread();
-        thief.setOrdinaryThiefState(AssaultPartyProxyAgent.CRAWLING_INWARDS);
-        generalRepository.setOrdinaryThiefState(thief.getOrdinaryThiefID(), thief.getOrdinaryThiefState(), thief.getOrdinaryThiefSituation(), thief.getOrdinaryThiefMaxDisplacement());
+    public synchronized ReturnBoolean crawlIn(int ordinaryThief, int maxDisplacement) {
+        setOrdinaryThiefState(ordinaryThief, OrdinaryThief.CRAWLING_INWARDS, maxDisplacement);
         int roomDistance = room.getDistance();
         Situation situation;
         do {
-            situation = whereAmI(thief.getOrdinaryThiefID());
+            situation = whereAmI(ordinaryThief);
             int movement = 0;
             switch (situation) {
                 case FRONT:
-                movement = crawlFront(thief);
+                movement = crawlFront(ordinaryThief, maxDisplacement);
                 break;
                 case MID:
-                movement = crawlMid(thief, true, roomDistance);
+                movement = crawlMid(ordinaryThief, maxDisplacement, true, roomDistance);
                 break;
                 case BACK:
-                movement = crawlBack(thief, true, roomDistance);
+                movement = crawlBack(ordinaryThief, maxDisplacement, true, roomDistance);
                 break;
                 default:
                 break;
             }
             if (movement > 0) {
-                thiefPositions.put(thief.getOrdinaryThiefID(), Math.min(thiefPositions.get(thief.getOrdinaryThiefID()) + movement, roomDistance));
-                generalRepository.setAssaultPartyMember(this.id, thief.getOrdinaryThiefID(), thiefPositions.get(thief.getOrdinaryThiefID()), 
-                                                        thiefCanvas.get(thief.getOrdinaryThiefID()) ? 1 : 0);
+                thiefPositions.put(ordinaryThief, Math.min(thiefPositions.get(ordinaryThief) + movement, roomDistance));
+                setAssaultPartyMember(ordinaryThief, thiefPositions.get(ordinaryThief),
+                        thiefCanvas.get(ordinaryThief) ? 1 : 0);
                 updateLineIn();
             } else {
                 nextThiefToCrawl = getNextInLine(situation);
                 notifyAll();
-                while (nextThiefToCrawl != thief.getOrdinaryThiefID()) {
+                while (nextThiefToCrawl != ordinaryThief) {
                     try {
                         wait();
-                    } catch (InterruptedException ignored) {
-
-                    }
+                    } catch (InterruptedException ignored) {}
                 }
             }
-        } while (thiefPositions.get(thief.getOrdinaryThiefID()) < roomDistance);
-        nextThiefToCrawl = getNextInLine(whereAmI(thief.getOrdinaryThiefID()));
+        } while (thiefPositions.get(ordinaryThief) < roomDistance);
+        nextThiefToCrawl = getNextInLine(whereAmI(ordinaryThief));
         notifyAll();
-        return false;
+        return new ReturnBoolean(false, OrdinaryThief.CRAWLING_INWARDS);
     }
 
     /**
@@ -178,57 +175,51 @@ public class AssaultParty {
      * Called by the Ordinary Thief to crawl out.
      * @return false if they have finished the crawling.
      */
-    public synchronized boolean crawlOut() {
-        AssaultPartyProxyAgent thief = (AssaultPartyProxyAgent) Thread.currentThread();
-        thief.setOrdinaryThiefState(AssaultPartyProxyAgent.CRAWLING_OUTWARDS);
-        generalRepository.setOrdinaryThiefState(thief.getOrdinaryThiefID(), thief.getOrdinaryThiefState(), thief.getOrdinaryThiefSituation(), thief.getOrdinaryThiefMaxDisplacement());
+    public synchronized ReturnBoolean crawlOut(int ordinaryThief, int maxDisplacement) {
+        setOrdinaryThiefState(ordinaryThief, OrdinaryThief.CRAWLING_OUTWARDS, maxDisplacement);
         Situation situation;
-        // System.out.println("currentThief: " + thief.getID() + "; position=" + thiefPositions.get(thief.getID()) + "; MD=" + thief.getMaxDisplacement());
         do {
-            situation = whereAmI(thief.getOrdinaryThiefID());
+            situation = whereAmI(ordinaryThief);
             int movement = 0;
             switch (situation) {
                 case FRONT:
-                movement = crawlFront(thief);
+                movement = crawlFront(ordinaryThief, maxDisplacement);
                 break;
                 case MID:
-                movement = crawlMid(thief, false, 0);
+                movement = crawlMid(ordinaryThief, maxDisplacement, false, 0);
                 break;
                 case BACK:
-                movement = crawlBack(thief, false, 0);
+                movement = crawlBack(ordinaryThief, maxDisplacement, false, 0);
                 break;
                 default:
                 break;
             }
             if (movement > 0) {
-                thiefPositions.put(thief.getOrdinaryThiefID(), Math.max(thiefPositions.get(thief.getOrdinaryThiefID()) - movement, 0));
-                generalRepository.setAssaultPartyMember(this.id, thief.getOrdinaryThiefID(), thiefPositions.get(thief.getOrdinaryThiefID()), 
-                                                        thiefCanvas.get(thief.getOrdinaryThiefID()) ? 1 : 0);
+                thiefPositions.put(ordinaryThief, Math.max(thiefPositions.get(ordinaryThief) - movement, 0));
+                setAssaultPartyMember(ordinaryThief, thiefPositions.get(ordinaryThief),
+                                                        thiefCanvas.get(ordinaryThief) ? 1 : 0);
                 updateLineOut();
-                // System.out.println("currentThief: " + thief.getID() + "; position=" + thiefPositions.get(thief.getID()) + "; MD=" + thief.getMaxDisplacement() + "; situation=" + situation);
             } else {
                 updateLineOut();
                 nextThiefToCrawl = getNextInLine(situation);
                 notifyAll();
-                while (thief.getOrdinaryThiefID() != nextThiefToCrawl) {
+                while (ordinaryThief != nextThiefToCrawl) {
                     try {
                         wait();
-                    } catch (InterruptedException ignored) {
-
-                    }
+                    } catch (InterruptedException ignored) {}
                 }
             }
-        } while (thiefPositions.get(thief.getOrdinaryThiefID()) > 0);
-        nextThiefToCrawl = getNextInLine(whereAmI(thief.getOrdinaryThiefID()));
+        } while (thiefPositions.get(ordinaryThief) > 0);
+        nextThiefToCrawl = getNextInLine(whereAmI(ordinaryThief));
         notifyAll();
-        return false;
+        return new ReturnBoolean(false, OrdinaryThief.CRAWLING_OUTWARDS);
     }
 
     /**
      * Shuts down the Assault Party server.
      */
     public synchronized void shutdown () {
-        AssaultPartyMain.waitConnection = false;
+        AssaultParty0Main.shutdown();
     }
 
     /**
@@ -274,7 +265,7 @@ public class AssaultParty {
      */
     public void setRoom(int room, int paintings, int distance) {
         this.room = new Room(room, distance, paintings);
-        generalRepository.setAssaultPartyRoom(this.id, room);
+        setAssaultPartyRoom(room);
     }
 
     /**
@@ -291,7 +282,7 @@ public class AssaultParty {
             this.thieves.add(thief);
             thiefPositions.put(thief, 0);
             thiefCanvas.put(thief, false);
-            generalRepository.setAssaultPartyMember(this.id, thief, 0, 0);
+            setAssaultPartyMember(thief, 0, 0);
         }
     }
 
@@ -311,7 +302,7 @@ public class AssaultParty {
     public void removeMember(int thief) {
         if (this.thieves.contains(thief)) {
             this.thieves.remove((Integer) thief);
-            generalRepository.removeAssaultPartyMember(this.id, thief);
+            removeAssaultPartyMember(thief);
         }
     }
 
@@ -348,13 +339,7 @@ public class AssaultParty {
         this.thieves.sort(new Comparator<Integer>() {
             @Override
             public int compare(Integer t1, Integer t2) {
-                if (thiefPositions.get(t1) > thiefPositions.get(t2)) {
-                    return 1;
-                }
-                if (thiefPositions.get(t1) < thiefPositions.get(t2)) {
-                    return -1;
-                }
-                return 0;
+                return thiefPositions.get(t1).compareTo(thiefPositions.get(t2));
             }
         });
     }
@@ -366,45 +351,39 @@ public class AssaultParty {
         this.thieves.sort(new Comparator<Integer>() {
             @Override
             public int compare(Integer t1, Integer t2) {
-                if (thiefPositions.get(t1) > thiefPositions.get(t2)) {
-                    return -1;
-                }
-                if (thiefPositions.get(t1) < thiefPositions.get(t2)) {
-                    return 1;
-                }
-                return 0;
+                return thiefPositions.get(t2).compareTo(thiefPositions.get(t1));
             }
         });
     }
 
     /**
      * Returns the maximum possible movement for the Ordinary Thief in the front.
-     * @param thief the Ordinary Thief in the front.
+     * @param ordinaryThief the Ordinary Thief in the front.
      * @return the maximum possible movement.
      */
-    private int crawlFront(AssaultPartyProxyAgent thief) {
+    private int crawlFront(int ordinaryThief, int maxDisplacement) {
         int nextThief = getNextInLine(Situation.FRONT);
-        int thiefSeparation = Math.abs(thiefPositions.get(thief.getOrdinaryThiefID()) - thiefPositions.get(nextThief));
+        int thiefSeparation = Math.abs(thiefPositions.get(ordinaryThief) - thiefPositions.get(nextThief));
         if (thiefSeparation > Constants.MAX_THIEF_SEPARATION) {
             return 0;
         }
-        return Math.min(thief.getOrdinaryThiefMaxDisplacement(), Constants.MAX_THIEF_SEPARATION - thiefSeparation);
+        return Math.min(maxDisplacement, Constants.MAX_THIEF_SEPARATION - thiefSeparation);
     }
 
     /**
      * Returns the maximum possible movement for the Ordinary Thief in the middle.
-     * @param thief the Ordinary Thief in the middle.
+     * @param ordinaryThief the Ordinary Thief in the middle.
      * @param in true if crawling in, false if crawling out.
      * @return the maximum possible movement.
      */
-    private int crawlMid(AssaultPartyProxyAgent thief, boolean in, int goalPosition) {
+    private int crawlMid(int ordinaryThief, int maxDisplacement, boolean in, int goalPosition) {
         int frontThief = getPreviousInLine(Situation.MID);
         int backThief = getNextInLine(Situation.MID);
         int nextPosition;
-        int position = thiefPositions.get(thief.getOrdinaryThiefID());
+        int position = thiefPositions.get(ordinaryThief);
         int frontPosition = thiefPositions.get(frontThief);
         int backPosition = thiefPositions.get(backThief);
-        for (int displacement = thief.getOrdinaryThiefMaxDisplacement(); displacement > 0; displacement--) {
+        for (int displacement = maxDisplacement; displacement > 0; displacement--) {
             if (in) {
                 nextPosition = position + displacement;
                 if (Math.min(nextPosition - backPosition, frontPosition - backPosition) <= Constants.MAX_THIEF_SEPARATION
@@ -426,17 +405,18 @@ public class AssaultParty {
 
     /**
      * Returns the maximum possible movement for the Ordinary Thief in the back.
-     * @param thief the Ordinary Thief in the back.
+     * @param ordinaryThief the Ordinary Thief in the back.
      * @param in true if crawling in, false if crawling out.
      * @return the maximum possible movement.
      */
-    private int crawlBack(AssaultPartyProxyAgent thief, boolean in, int goalPosition) {
+    private int crawlBack(int ordinaryThief, int maxDisplacement, boolean in, int goalPosition) {
         int frontThief = getNextInLine(Situation.BACK);
-        int movement, nextPosition, frontThiefPosition = thiefPositions.get(frontThief), position = thiefPositions.get(thief.getOrdinaryThiefID());
+        int movement, nextPosition, frontThiefPosition = thiefPositions.get(frontThief), position = thiefPositions.get(ordinaryThief);
+        int maxMovement = Constants.MAX_THIEF_SEPARATION + Math.abs(frontThiefPosition - position);
         if (thiefPositions.get(frontThief) != goalPosition) {
             int midThief = getPreviousInLine(Situation.BACK);
-            for (int displacement = thief.getOrdinaryThiefMaxDisplacement(); displacement > 0; displacement--) {
-                movement = Math.min(displacement, Constants.MAX_THIEF_SEPARATION + Math.abs(frontThiefPosition - position));
+            for (int displacement = maxDisplacement; displacement > 0; displacement--) {
+                movement = Math.min(displacement, maxMovement);
                 if (in) {
                     nextPosition = position + movement;
                 } else {
@@ -448,8 +428,8 @@ public class AssaultParty {
                 }
             }
         } else {
-            for (int displacement = thief.getOrdinaryThiefMaxDisplacement(); displacement > 0; displacement--) {
-                movement = Math.min(displacement, Constants.MAX_THIEF_SEPARATION + Math.abs(frontThiefPosition - position));
+            for (int displacement = maxDisplacement; displacement > 0; displacement--) {
+                movement = Math.min(displacement, maxMovement);
                 if (in) {
                     nextPosition = position + movement;
                 } else {
@@ -518,5 +498,50 @@ public class AssaultParty {
             return Situation.BACK;
         }
         return Situation.MID;
+    }
+    
+    private void setMasterThiefState() {
+        try {
+            generalRepositoryStub.setMasterThiefState(MasterThief.DECIDING_WHAT_TO_DO);
+        } catch (RemoteException e) {
+            System.out.println("Remote exception on AssaultParty.setMasterThiefState: " + e.getMessage());
+            System.exit(1);
+        }
+    }
+
+    private void setOrdinaryThiefState(int ordinaryThief, int state, int maxDisplacement) {
+        try {
+            generalRepositoryStub.setOrdinaryThiefState(ordinaryThief, state, maxDisplacement);
+        } catch (RemoteException e) {
+            System.out.println("Remote exception on AssaultParty.setOrdinaryThiefState: " + e.getMessage());
+            System.exit(1);
+        }
+    }
+
+    private void setAssaultPartyMember(int ordinaryThief, int position, int canvas) {
+        try {
+            generalRepositoryStub.setAssaultPartyMember(this.id, ordinaryThief, position, canvas);
+        } catch (RemoteException e) {
+            System.out.println("Remote exception on AssaultParty.setAssaultPartyMember: " + e.getMessage());
+            System.exit(1);
+        }
+    }
+
+    private void setAssaultPartyRoom(int room) {
+        try {
+            generalRepositoryStub.setAssaultPartyRoom(this.id, room);
+        } catch (RemoteException e) {
+            System.out.println("Remote exception on AssaultParty.setAssaultPartyRoom: " + e.getMessage());
+            System.exit(1);
+        }
+    }
+
+    private void removeAssaultPartyMember(int ordinaryThief) {
+        try {
+            generalRepositoryStub.removeAssaultPartyMember(this.id, ordinaryThief);
+        } catch (RemoteException e) {
+            System.out.println("Remote exception on AssaultParty.removeAssaultPartyMember: " + e.getMessage());
+            System.exit(1);
+        }
     }
 }

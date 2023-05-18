@@ -161,14 +161,14 @@ public class MasterThief extends Thread {
 
     private void sendAssaultParty(int assaultParty) {
         System.out.println("initiating sendAssaultParty " + assaultParty);
-        ReturnVoid ret = null;                                 // return value
+        int ret = 0;                                 // return value
         try {
             ret = assaultPartyStubs[assaultParty].sendAssaultParty();
         } catch (RemoteException e) {
             System.out.println("Remote exception on sendAssaultParty: " + e.getMessage());
             System.exit (1);
         }
-        state = ret.getState();
+        state = ret;
         System.out.println("finished sendAssaultParty " + assaultParty);
     }
 

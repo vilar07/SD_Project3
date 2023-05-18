@@ -21,13 +21,13 @@ public interface AssaultPartyInterface extends Remote {
      * Called by the Master Thief to send the Assault Party to the museum.
      * After that call, Assault Party can start crawling.
      */
-    public void sendAssaultParty() throws RemoteException;
+    public int sendAssaultParty() throws RemoteException;
 
     /**
      * Called by the Ordinary Thief to crawl in.
      * @return false if they have finished the crawling.
      */
-    public boolean crawlIn(int ordinaryThief, int ordinaryThiefMaxDisplacement) throws RemoteException;
+    public ReturnBoolean crawlIn(int ordinaryThief, int ordinaryThiefMaxDisplacement) throws RemoteException;
 
     /**
      * Called to awake the first member in the line of Assault Party, by the last party member that rolled a canvas,
@@ -40,7 +40,7 @@ public interface AssaultPartyInterface extends Remote {
      * Called by the Ordinary Thief to crawl out.
      * @return false if they have finished the crawling.
      */
-    public boolean crawlOut(int ordinaryThief, int ordinaryThiefMaxDisplacement) throws RemoteException;
+    public ReturnBoolean crawlOut(int ordinaryThief, int ordinaryThiefMaxDisplacement) throws RemoteException;
 
     /**
      * Sends the shutdown signal to the Assault Party.
