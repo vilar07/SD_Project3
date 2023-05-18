@@ -9,7 +9,7 @@ import utils.Constants;
 /**
  * The Museum has rooms inside it. Those rooms have paintings that can be stolen by the Ordinary Thieves of the Assault Party.
  */
-public class MuseumStub {
+public class MuseumInterface {
     /**
      * Name of the machine where the Museum resides.
      */
@@ -24,7 +24,7 @@ public class MuseumStub {
      * MuseumStub constructor 1, hostName is localhost.
      * @param portNumber the port number.
      */
-    public MuseumStub(int portNumber) {
+    public MuseumInterface(int portNumber) {
         this.portNumber = portNumber;
         this.hostName = "localhost";
     }
@@ -34,7 +34,7 @@ public class MuseumStub {
      * @param hostName the host name.
      * @param portNumber the port number.
      */
-    public MuseumStub(String hostName, int portNumber) {
+    public MuseumInterface(String hostName, int portNumber) {
         this.hostName = hostName;
         this.portNumber = portNumber;
     }

@@ -1,8 +1,11 @@
 package clientSide.entities;
 
-import clientSide.stubs.AssaultPartyStub;
-import clientSide.stubs.CollectionSiteStub;
-import clientSide.stubs.ConcentrationSiteStub;
+import interfaces.AssaultPartyInterface;
+import interfaces.CollectionSiteInterface;
+import interfaces.ConcentrationSiteInterface;
+import interfaces.ReturnVoid;
+
+import java.rmi.RemoteException;
 
 /**
  * Master Thief, the thief that commands the heist.
@@ -41,31 +44,31 @@ public class MasterThief extends Thread {
     /**
      * Variable holding the Collection Site shared region.
      */
-    private final CollectionSiteStub collectionSite;
+    private final CollectionSiteInterface collectionSiteStub;
 
     /**
      * Variable holding the Concentration Site shared region.
      */
-    private final ConcentrationSiteStub concentrationSite;
+    private final ConcentrationSiteInterface concentrationSiteStub;
 
     /**
      * Array holding the Assault Parties shared regions.
      */
-    private final AssaultPartyStub[] assaultParties;
+    private final AssaultPartyInterface[] assaultPartyStubs;
 
     /**
      * Public constructor for Master Thief.
      * Initializes the state as PLANNING_THE_HEIST and her perception that all rooms of the museum
      * are empty.
-     * @param collectionSite the Collection Site.
-     * @param concentrationSite the Concentration Site.
-     * @param assaultParties the Assault Parties.
+     * @param collectionSiteStub the Collection Site.
+     * @param concentrationSiteStub the Concentration Site.
+     * @param assaultPartyStubs the Assault Parties.
      */
-    public MasterThief(CollectionSiteStub collectionSite,
-            ConcentrationSiteStub concentrationSite, AssaultPartyStub[] assaultParties) {
-        this.collectionSite = collectionSite;
-        this.concentrationSite = concentrationSite;
-        this.assaultParties = assaultParties;
+    public MasterThief(CollectionSiteInterface collectionSiteStub,
+                       ConcentrationSiteInterface concentrationSiteStub, AssaultPartyInterface[] assaultPartyStubs) {
+        this.collectionSiteStub = collectionSiteStub;
+        this.concentrationSiteStub = concentrationSiteStub;
+        this.assaultPartyStubs = assaultPartyStubs;
         setState(PLANNING_THE_HEIST);
     }
 
@@ -90,31 +93,120 @@ public class MasterThief extends Thread {
      */
     @Override
     public void run() {
-        System.out.println("startOperations");
-        collectionSite.startOperations();
+        startOperations();
         char operation;
-        while ((operation = collectionSite.appraiseSit()) != 'E') {
+        while ((operation = appraiseSit()) != 'E') {
             switch (operation) {
-                case 'P':
-                int assaultPartyID = collectionSite.getNextAssaultPartyID();
-                System.out.println("initiating prepareAssaultParty " + assaultPartyID);
-                concentrationSite.prepareAssaultParty(assaultPartyID); 
-                System.out.println("finished prepareAssaultParty " + assaultPartyID + "; initiating sendAssaultParty " + assaultPartyID);
-                assaultParties[assaultPartyID].sendAssaultParty();
-                System.out.println("finished sendAssaultParty " + assaultPartyID);
-                break;
-                case 'R':
-                System.out.println("initiating takeARest");
-                collectionSite.takeARest();
-                System.out.println("finished takeARest; initiating collectACanvas");
-                collectionSite.collectACanvas();
-                System.out.println("finished collectACanvas");
-                break;
+                case 'P' -> {
+                    int assaultPartyID = getNextAssaultPartyID();
+                    prepareAssaultParty(assaultPartyID);
+                    sendAssaultParty(assaultPartyID);
+                }
+                case 'R' -> {
+                    takeARest();
+                    collectACanvas();
+                }
             }
-            System.out.println("appraiseSit");
         }
-        System.out.println("sumUpResults");
-        concentrationSite.sumUpResults();
-        System.out.println("Terminated");
+        sumUpResults();
+    }
+
+    private void startOperations() {
+        System.out.println("startOperations");
+        ReturnVoid ret = null;                                 // return value
+        try {
+            ret = collectionSiteStub.startOperations();
+        } catch (RemoteException e) {
+            System.out.println("Remote exception on startOperations: " + e.getMessage());
+            System.exit (1);
+        }
+        state = ret.getState();
+    }
+
+    private char appraiseSit() {
+        System.out.println("appraiseSit");
+        char ret = 0;                                 // return value
+        try {
+            ret = collectionSiteStub.appraiseSit();
+        } catch (RemoteException e) {
+            System.out.println("Remote exception on appraiseSit: " + e.getMessage());
+            System.exit (1);
+        }
+        return ret;
+    }
+
+    private int getNextAssaultPartyID() {
+        int ret = 0;                                 // return value
+        try {
+            ret = collectionSiteStub.getNextAssaultPartyID();
+        } catch (RemoteException e) {
+            System.out.println("Remote exception on getNextAssaultPartyID: " + e.getMessage());
+            System.exit (1);
+        }
+        return ret;
+    }
+
+    private void prepareAssaultParty(int assaultParty) {
+        System.out.println("initiating prepareAssaultParty " + assaultParty);
+        ReturnVoid ret = null;                                 // return value
+        try {
+            ret = concentrationSiteStub.prepareAssaultParty(assaultParty);
+        } catch (RemoteException e) {
+            System.out.println("Remote exception on prepareAssaultParty: " + e.getMessage());
+            System.exit (1);
+        }
+        state = ret.getState();
+        System.out.println("finished prepareAssaultParty " + assaultParty);
+    }
+
+    private void sendAssaultParty(int assaultParty) {
+        System.out.println("initiating sendAssaultParty " + assaultParty);
+        ReturnVoid ret = null;                                 // return value
+        try {
+            ret = assaultPartyStubs[assaultParty].sendAssaultParty();
+        } catch (RemoteException e) {
+            System.out.println("Remote exception on sendAssaultParty: " + e.getMessage());
+            System.exit (1);
+        }
+        state = ret.getState();
+        System.out.println("finished sendAssaultParty " + assaultParty);
+    }
+
+    private void takeARest() {
+        System.out.println("initiating takeARest");
+        ReturnVoid ret = null;                                 // return value
+        try {
+            ret = collectionSiteStub.takeARest();
+        } catch (RemoteException e) {
+            System.out.println("Remote exception on takeARest: " + e.getMessage());
+            System.exit (1);
+        }
+        state = ret.getState();
+        System.out.println("finished takeARest");
+    }
+
+    private void collectACanvas() {
+        System.out.println("initiating collectACanvas");
+        ReturnVoid ret = null;                                 // return value
+        try {
+            ret = collectionSiteStub.collectACanvas();
+        } catch (RemoteException e) {
+            System.out.println("Remote exception on collectACanvas: " + e.getMessage());
+            System.exit (1);
+        }
+        state = ret.getState();
+        System.out.println("finished collectACanvas");
+    }
+
+    private void sumUpResults() {
+        System.out.println("initiating sumUpResults");
+        ReturnVoid ret = null;                                 // return value
+        try {
+            ret = concentrationSiteStub.sumUpResults();
+        } catch (RemoteException e) {
+            System.out.println("Remote exception on sumUpResults: " + e.getMessage());
+            System.exit (1);
+        }
+        state = ret.getState();
     }
 }

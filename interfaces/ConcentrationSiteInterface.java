@@ -10,7 +10,7 @@ import utils.Constants;
 /**
  * Concentration Site where ordinary thieves wait for orders.
  */
-public class ConcentrationSiteStub {
+public class ConcentrationSiteInterface {
     /**
      * Name of the machine where the Concentration Site resides.
      */
@@ -25,7 +25,7 @@ public class ConcentrationSiteStub {
      * ConcentrationSiteStub constructor 1, hostName is localhost.
      * @param portNumber the port number.
      */
-    public ConcentrationSiteStub(int portNumber) {
+    public ConcentrationSiteInterface(int portNumber) {
         this.portNumber = portNumber;
         this.hostName = "localhost";
     }
@@ -35,7 +35,7 @@ public class ConcentrationSiteStub {
      * @param hostName the host name.
      * @param portNumber the port number.
      */
-    public ConcentrationSiteStub(String hostName, int portNumber) {
+    public ConcentrationSiteInterface(String hostName, int portNumber) {
         this.hostName = hostName;
         this.portNumber = portNumber;
     }

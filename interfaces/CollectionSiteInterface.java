@@ -10,7 +10,7 @@ import utils.Constants;
 /**
  * Collection Site where Master Thief intelligence and paintings are stored.
  */
-public class CollectionSiteStub {
+public class CollectionSiteInterface {
     /**
      * Name of the machine where the Collection Site resides.
      */
@@ -25,7 +25,7 @@ public class CollectionSiteStub {
      * CollectionSiteStub constructor 1, hostName is localhost.
      * @param portNumber the port number.
      */
-    public CollectionSiteStub(int portNumber) {
+    public CollectionSiteInterface(int portNumber) {
         this.portNumber = portNumber;
         this.hostName = "localhost";
     }
@@ -35,7 +35,7 @@ public class CollectionSiteStub {
      * @param hostName the host name.
      * @param portNumber the port number.
      */
-    public CollectionSiteStub(String hostName, int portNumber) {
+    public CollectionSiteInterface(String hostName, int portNumber) {
         this.hostName = hostName;
         this.portNumber = portNumber;
     }

@@ -7,7 +7,7 @@ import commInfra.MessageType;
 /**
  * The General Repository, where all information is stored and logged.
  */
-public class GeneralRepositoryStub {
+public class GeneralRepositoryInterface {
     /**
      * Name of the machine where the General Repository resides.
      */
@@ -22,7 +22,7 @@ public class GeneralRepositoryStub {
      * GeneralRepositoryStub constructor 1, hostName is localhost.
      * @param portNumber the port number.
      */
-    public GeneralRepositoryStub(int portNumber) {
+    public GeneralRepositoryInterface(int portNumber) {
         this.portNumber = portNumber;
         this.hostName = "localhost";
     }
@@ -32,7 +32,7 @@ public class GeneralRepositoryStub {
      * @param hostName the host name.
      * @param portNumber the port number.
      */
-    public GeneralRepositoryStub(String hostName, int portNumber) {
+    public GeneralRepositoryInterface(String hostName, int portNumber) {
         this.hostName = hostName;
         this.portNumber = portNumber;
     }

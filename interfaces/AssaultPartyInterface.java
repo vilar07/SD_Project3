@@ -14,7 +14,7 @@ import utils.Constants;
  *    Implementation of a client-server model of type 2 (server replication).
  *    Communication is based on a communication channel under the TCP protocol.
  */
-public class AssaultPartyStub {
+public class AssaultPartyInterface {
     /**
      * Name of the machine where the Assault Party is located.
      */
@@ -35,7 +35,7 @@ public class AssaultPartyStub {
      * @param id the identification of the Assault Party.
      * @param portNumber the port number.
      */
-    public AssaultPartyStub(int id, int portNumber) {
+    public AssaultPartyInterface(int id, int portNumber) {
         this.id = id;
         this.portNumber = portNumber;
         this.hostName = "localhost";
@@ -47,7 +47,7 @@ public class AssaultPartyStub {
      * @param hostName the host name.
      * @param portNumber the port number.
      */
-    public AssaultPartyStub(int id, String hostName, int portNumber) {
+    public AssaultPartyInterface(int id, String hostName, int portNumber) {
         this.id = id;
         this.hostName = hostName;
         this.portNumber = portNumber;
