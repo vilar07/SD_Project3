@@ -2,7 +2,7 @@ package serverSide.main;
 
 import serverSide.entities.*;
 import serverSide.interfaces.AssaultPartyInterface;
-import serverSide.sharedRegions.*;
+import serverSide.objects.*;
 import utils.Constants;
 import commInfra.*;
 import java.net.*;

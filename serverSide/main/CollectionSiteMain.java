@@ -2,7 +2,7 @@ package serverSide.main;
 
 import serverSide.entities.*;
 import serverSide.interfaces.CollectionSiteInterface;
-import serverSide.sharedRegions.*;
+import serverSide.objects.*;
 import commInfra.*;
 import java.net.*;
 
