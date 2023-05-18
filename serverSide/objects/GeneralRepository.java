@@ -148,13 +148,12 @@ public class GeneralRepository {
     }
 
     /**
-     * Sets the Ordinary Thief state.
+     * Sets the Ordinary Thief state (version 1).
      * @param id the identification of the thief.
      * @param state the state code to change to.
-     * @param situation the situation of the thief.
      * @param maxDisplacement the maximum displacement of the thief.
      */
-    public void setOrdinaryThiefState(int id, int state, char situation, int maxDisplacement) {
+    public void setOrdinaryThiefState(int id, int state, int maxDisplacement) {
         switch (state) {
             case OrdinaryThief.CONCENTRATION_SITE:
             ordinaryThieves[id].setState("CONC");
@@ -172,8 +171,35 @@ public class GeneralRepository {
             ordinaryThieves[id].setState("COUT");
             break;
         }
-        ordinaryThieves[id].setSituation(situation);
+        ordinaryThieves[id].setSituation(getSituation(id));
         ordinaryThieves[id].setMaxDisplacement((char) (maxDisplacement + '0'));
+        printState();
+    }
+
+    /**
+     * Sets the Ordinary Thief state (version 2).
+     * @param id the identification of the thief.
+     * @param state the state code to change to.
+     */
+    public void setOrdinaryThiefState(int id, int state) {
+        switch (state) {
+            case OrdinaryThief.CONCENTRATION_SITE:
+                ordinaryThieves[id].setState("CONC");
+                break;
+            case OrdinaryThief.COLLECTION_SITE:
+                ordinaryThieves[id].setState("COLL");
+                break;
+            case OrdinaryThief.CRAWLING_INWARDS:
+                ordinaryThieves[id].setState("CRIN");
+                break;
+            case OrdinaryThief.AT_A_ROOM:
+                ordinaryThieves[id].setState("ROOM");
+                break;
+            case OrdinaryThief.CRAWLING_OUTWARDS:
+                ordinaryThieves[id].setState("COUT");
+                break;
+        }
+        ordinaryThieves[id].setSituation(getSituation(id));
         printState();
     }
 
@@ -286,5 +312,10 @@ public class GeneralRepository {
      */
     public synchronized void shutdown () {
         GeneralRepositoryMain.waitConnection = false;
+    }
+
+    private char getSituation(int ordinaryThief) {
+        String ordinaryThiefState = ordinaryThieves[ordinaryThief].getState();
+        return (ordinaryThiefState.equals("CONC") || ordinaryThiefState.equals("COLL")) ? 'W' : 'P';
     }
 }
