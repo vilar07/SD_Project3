@@ -178,14 +178,14 @@ public class OrdinaryThief extends Thread {
 
     private void rollACanvas(int assaultParty) {
         System.out.println("initiating rollACanvas in party " + assaultParty);
-        ReturnVoid ret = null;                                 // return value
+        int ret = 0;                                 // return value
         try {
             ret = museumStub.rollACanvas(assaultParty, id);
         } catch (RemoteException e) {
             System.out.println("Remote exception on rollACanvas: " + e.getMessage());
             System.exit (1);
         }
-        state = ret.getState();
+        state = ret;
         System.out.println("finished rollACanvas in party " + assaultParty);
     }
 

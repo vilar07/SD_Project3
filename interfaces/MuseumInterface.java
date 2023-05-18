@@ -12,7 +12,7 @@ public interface MuseumInterface extends Remote {
      * @param assaultParty the identification of the AssaultParty.
      * @param ordinaryThief the identification of the OrdinaryThief.
      */
-    public ReturnVoid rollACanvas(int assaultParty, int ordinaryThief) throws RemoteException;
+    public int rollACanvas(int assaultParty, int ordinaryThief) throws RemoteException;
 
     /**
      * Sends the shutdown signal to the Museum.
