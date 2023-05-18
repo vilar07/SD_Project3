@@ -1,9 +1,8 @@
 package clientSide.entities;
 
-import clientSide.stubs.AssaultPartyStub;
-import clientSide.stubs.CollectionSiteStub;
-import clientSide.stubs.ConcentrationSiteStub;
-import clientSide.stubs.MuseumStub;
+import interfaces.*;
+
+import java.rmi.RemoteException;
 
 /**
  * Ordinary Thief, one of the thieves involved in the heist.
@@ -52,39 +51,40 @@ public class OrdinaryThief extends Thread {
     /**
      * Array holding the Assault Parties shared regions.
      */
-    private final AssaultPartyStub[] assaultParties;
+    private final AssaultPartyInterface[] assaultPartyStubs;
 
     /**
      * Variable holding the Concentration Site shared region.
      */
-    private final ConcentrationSiteStub concentrationSite;
+    private final ConcentrationSiteInterface concentrationSiteStub;
 
     /**
      * Variable holding the Collection Site shared region.
      */
-    private final MuseumStub museum;
+    private final MuseumInterface museumStub;
 
     /**
      * Variable holding the Collection Site shared region.
      */
-    private final CollectionSiteStub collectionSite;
+    private final CollectionSiteInterface collectionSiteStub;
 
     /**
      * Ordinary Thief constructor.
      * @param id the identification of the thief.
-     * @param museum the Museum.
-     * @param collectionSite the Collection Site.
-     * @param concentrationSite the Concentration Site.
-     * @param assaultParties the Assault Parties array.
+     * @param museumStub the Museum.
+     * @param collectionSiteStub the Collection Site.
+     * @param concentrationSiteStub the Concentration Site.
+     * @param assaultPartyStubs the Assault Parties array.
      * @param maxDisplacement the maximum displacement.
      */
-    public OrdinaryThief(int id, MuseumStub museum, CollectionSiteStub collectionSite, ConcentrationSiteStub concentrationSite, 
-                                AssaultPartyStub[] assaultParties, int maxDisplacement) {
+    public OrdinaryThief(int id, MuseumInterface museumStub, CollectionSiteInterface collectionSiteStub,
+                         ConcentrationSiteInterface concentrationSiteStub, AssaultPartyInterface[] assaultPartyStubs,
+                         int maxDisplacement) {
         this.id = id;
-        this.museum = museum;
-        this.collectionSite = collectionSite;
-        this.concentrationSite = concentrationSite;
-        this.assaultParties = assaultParties;
+        this.museumStub = museumStub;
+        this.collectionSiteStub = collectionSiteStub;
+        this.concentrationSiteStub = concentrationSiteStub;
+        this.assaultPartyStubs = assaultPartyStubs;
         this.maxDisplacement = maxDisplacement;
         setState(CONCENTRATION_SITE);
     }
@@ -126,21 +126,104 @@ public class OrdinaryThief extends Thread {
      */
     @Override
     public void run() {
-        while((concentrationSite.amINeeded())){
-            System.out.println(id + " - initiating prepareExcursion");
-            int assaultPartyID = concentrationSite.prepareExcursion();
-            System.out.println(id + " - finished prepareExcursion in party " + assaultPartyID + "; initiating crawlIn in party " + assaultPartyID);
-            while(assaultParties[assaultPartyID].crawlIn());
-            System.out.println(id + " - finished crawlIn in party " + assaultPartyID + "; initiating rollACanvas in party " + assaultPartyID);
-            museum.rollACanvas(assaultPartyID);
-            System.out.println(id + " - finished rollACanvas in party " + assaultPartyID + "; initiating reverseDirection in party " + assaultPartyID);
-            assaultParties[assaultPartyID].reverseDirection();
-            System.out.println(id + " - finished reverseDirection in party " + assaultPartyID + "; initiating crawlOut in party " + assaultPartyID);
-            while(assaultParties[assaultPartyID].crawlOut());
-            System.out.println(id + " - finished crawlOut in party " + assaultPartyID + "; initiating handACanvas in party " + assaultPartyID);
-            collectionSite.handACanvas(assaultPartyID);
-            System.out.println(id + " - finished handACanvas in party " + assaultPartyID);
+        while(amINeeded()) {
+            int assaultPartyID = prepareExcursion();
+            while(crawlIn(assaultPartyID));
+            rollACanvas(assaultPartyID);
+            reverseDirection(assaultPartyID);
+            while(crawlOut(assaultPartyID));
+            handACanvas(assaultPartyID);
         }
-        System.out.println(id + " terminated");
-    }    
+    }
+
+    private boolean amINeeded() {
+        System.out.println("initiating amINeeded");
+        ReturnBoolean ret = null;                                 // return value
+        try {
+            ret = concentrationSiteStub.amINeeded(id);
+        } catch (RemoteException e) {
+            System.out.println("Remote exception on amINeeded: " + e.getMessage());
+            System.exit (1);
+        }
+        state = ret.getState();
+        return ret.getValue();
+    }
+
+    private int prepareExcursion() {
+        System.out.println("initiating prepareExcursion");
+        int ret = 0;                                 // return value
+        try {
+            ret = concentrationSiteStub.prepareExcursion(id);
+        } catch (RemoteException e) {
+            System.out.println("Remote exception on prepareExcursion: " + e.getMessage());
+            System.exit (1);
+        }
+        System.out.println("finished prepareExcursion");
+        return ret;
+    }
+
+    private boolean crawlIn(int assaultParty) {
+        System.out.println("initiating crawlIn in party " + assaultParty);
+        ReturnBoolean ret = null;                                 // return value
+        try {
+            ret = assaultPartyStubs[assaultParty].crawlIn(id, maxDisplacement);
+        } catch (RemoteException e) {
+            System.out.println("Remote exception on crawlIn: " + e.getMessage());
+            System.exit (1);
+        }
+        state = ret.getState();
+        System.out.println("finished crawlIn in party " + assaultParty);
+        return ret.getValue();
+    }
+
+    private void rollACanvas(int assaultParty) {
+        System.out.println("initiating rollACanvas in party " + assaultParty);
+        ReturnVoid ret = null;                                 // return value
+        try {
+            ret = museumStub.rollACanvas(assaultParty, id);
+        } catch (RemoteException e) {
+            System.out.println("Remote exception on rollACanvas: " + e.getMessage());
+            System.exit (1);
+        }
+        state = ret.getState();
+        System.out.println("finished rollACanvas in party " + assaultParty);
+    }
+
+    private void reverseDirection(int assaultParty) {
+        System.out.println("initiating reverseDirection in party " + assaultParty);
+        try {
+            assaultPartyStubs[assaultParty].reverseDirection();
+        } catch (RemoteException e) {
+            System.out.println("Remote exception on reverseDirection: " + e.getMessage());
+            System.exit (1);
+        }
+        System.out.println("finished reverseDirection in party " + assaultParty);
+    }
+
+    private boolean crawlOut(int assaultParty) {
+        System.out.println("initiating crawlOut in party " + assaultParty);
+        ReturnBoolean ret = null;                                 // return value
+        try {
+            ret = assaultPartyStubs[assaultParty].crawlOut(id, maxDisplacement);
+        } catch (RemoteException e) {
+            System.out.println("Remote exception on crawlOut: " + e.getMessage());
+            System.exit (1);
+        }
+        state = ret.getState();
+        System.out.println("finished crawlOut in party " + assaultParty);
+        return ret.getValue();
+    }
+
+    private void handACanvas(int assaultParty) {
+        System.out.println("initiating handACanvas in party " + assaultParty);
+        ReturnVoid ret = null;                                 // return value
+        try {
+            ret = collectionSiteStub.handACanvas(assaultParty, id);
+        } catch (RemoteException e) {
+            System.out.println("Remote exception on handACanvas: " + e.getMessage());
+            System.exit (1);
+        }
+        state = ret.getState();
+        System.out.println("finished handACanvas in party " + assaultParty);
+    }
 }

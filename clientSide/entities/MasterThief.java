@@ -97,15 +97,15 @@ public class MasterThief extends Thread {
         char operation;
         while ((operation = appraiseSit()) != 'E') {
             switch (operation) {
-                case 'P' -> {
+                case 'P':
                     int assaultPartyID = getNextAssaultPartyID();
                     prepareAssaultParty(assaultPartyID);
                     sendAssaultParty(assaultPartyID);
-                }
-                case 'R' -> {
+                    break;
+                case 'R':
                     takeARest();
                     collectACanvas();
-                }
+                    break;
             }
         }
         sumUpResults();
