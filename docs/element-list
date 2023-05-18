@@ -1,0 +1,9 @@
+clientSide.entities
+clientSide.main
+clientSide.stubs
+commInfra
+serverSide.entities
+serverSide.interfaces
+serverSide.main
+serverSide.sharedRegions
+utils
