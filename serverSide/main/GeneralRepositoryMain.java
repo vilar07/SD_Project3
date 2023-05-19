@@ -85,7 +85,7 @@ public class GeneralRepositoryMain {
 
         String nameEntryBase = "RegisterHandler";                      // public name of the object that enables the registration
         // of other remote objects
-        String nameEntryObject = "GeneralRepository";                         // public name of the assault party 0 object
+        String nameEntryObject = "GeneralRepository";                  // public name of the general repository object
         Registry registry = null;
         Register reg = null;                                           // remote reference to the object that enables the registration
         // of other remote objects
