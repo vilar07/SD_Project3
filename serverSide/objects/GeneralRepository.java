@@ -2,6 +2,7 @@ package serverSide.objects;
 
 import clientSide.entities.MasterThief;
 import clientSide.entities.OrdinaryThief;
+import interfaces.GeneralRepositoryInterface;
 import serverSide.main.GeneralRepositoryMain;
 import utils.AssaultPartyElemLogging;
 import utils.AssaultPartyLogging;
@@ -13,7 +14,7 @@ import utils.RoomLogging;
 /**
  * General Repository where logging occurs.
  */
-public class GeneralRepository {
+public class GeneralRepository implements GeneralRepositoryInterface {
     /**
      * Logger that handles the writing of the internal state of the simulation to the logging file.
      */
