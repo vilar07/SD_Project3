@@ -8,7 +8,7 @@ mkdir -p dirGeneralRepos/serverSide/main dirGeneralRepos/serverSide/objects \
     dirGeneralRepos/utils \
     dirGeneralRepos/clientSide/entities
 cp serverSide/main/GeneralRepositoryMain.class dirGeneralRepos/serverSide/main
-cp serverSide/objects/GeneralRepository.class dirGeneralRepos/serverSide/objects
+cp serverSide/objects/*.class dirGeneralRepos/serverSide/objects
 cp interfaces/*.class dirGeneralRepos/interfaces
 cp clientSide/entities/*.class dirGeneralRepos/clientSide/entities
 cp utils/*.class dirGeneralRepos/utils
@@ -18,7 +18,7 @@ mkdir -p dirAP0/serverSide/main dirAP0/serverSide/objects \
     dirAP0/interfaces \
     dirAP0/clientSide/entities \
     dirAP0/utils
-cp serverSide/objects/AssaultParty*.class dirAP0/serverSide/objects
+cp serverSide/objects/*.class dirAP0/serverSide/objects
 cp serverSide/main/AssaultParty0Main.class dirAP0/serverSide/main
 cp interfaces/*.class dirAP0/interfaces
 cp clientSide/entities/*.class dirAP0/clientSide/entities
@@ -29,7 +29,7 @@ mkdir -p dirAP1/serverSide/main dirAP1/serverSide/objects \
     dirAP1/interfaces \
     dirAP1/clientSide/entities \
     dirAP1/utils
-cp serverSide/objects/AssaultParty*.class dirAP1/serverSide/objects
+cp serverSide/objects/*.class dirAP1/serverSide/objects
 cp serverSide/main/AssaultParty1Main.class dirAP1/serverSide/main
 cp interfaces/*.class dirAP1/interfaces
 cp clientSide/entities/*.class dirAP1/clientSide/entities
@@ -40,7 +40,7 @@ mkdir -p dirMuseum/serverSide/main dirMuseum/serverSide/objects \
     dirMuseum/interfaces \
     dirMuseum/clientSide/entities \
     dirMuseum/utils
-cp serverSide/objects/Museum.class dirMuseum/serverSide/objects
+cp serverSide/objects/*.class dirMuseum/serverSide/objects
 cp serverSide/main/MuseumMain.class dirMuseum/serverSide/main
 cp interfaces/*.class dirMuseum/interfaces
 cp clientSide/entities/OrdinaryThief.class dirMuseum/clientSide/entities
@@ -51,7 +51,7 @@ mkdir -p dirCollSite/serverSide/main dirCollSite/serverSide/objects \
     dirCollSite/interfaces \
     dirCollSite/clientSide/entities \
     dirCollSite/utils
-cp serverSide/objects/CollectionSite.class dirCollSite/serverSide/objects
+cp serverSide/objects/*.class dirCollSite/serverSide/objects
 cp serverSide/main/CollectionSiteMain.class dirCollSite/serverSide/main
 cp interfaces/*.class dirCollSite/interfaces
 cp clientSide/entities/*.class dirCollSite/clientSide/entities
@@ -62,7 +62,7 @@ mkdir -p dirConcSite/serverSide/main dirConcSite/serverSide/objects \
     dirConcSite/interfaces \
     dirConcSite/clientSide/entities \
     dirConcSite/utils
-cp serverSide/objects/ConcentrationSite.class dirConcSite/serverSide/objects
+cp serverSide/objects/*.class dirConcSite/serverSide/objects
 cp serverSide/main/ConcentrationSiteMain.class dirConcSite/serverSide/main
 cp interfaces/*.class dirConcSite/interfaces
 cp clientSide/entities/*.class dirConcSite/clientSide/entities
