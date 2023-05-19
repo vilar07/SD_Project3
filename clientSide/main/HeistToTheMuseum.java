@@ -168,13 +168,13 @@ public class HeistToTheMuseum
         try {
             concentrationSiteStub.shutdown();
         } catch (RemoteException e) {
-            System.out.println("Remote exception on ConcentrationSite shutdown: " + e.getMessage());
+            System.out.println("Remote exception on Concentration Site shutdown: " + e.getMessage());
             System.exit(1);
         }
         try {
             collectionSiteStub.shutdown();
         } catch (RemoteException e) {
-            System.out.println("Remote exception on CollectionSite shutdown: " + e.getMessage());
+            System.out.println("Remote exception on Collection Site shutdown: " + e.getMessage());
             System.exit(1);
         }
         try {
@@ -198,7 +198,7 @@ public class HeistToTheMuseum
         try {
             generalRepositoryStub.shutdown();
         } catch (RemoteException e) {
-            System.out.println("Remote exception on GeneralRepository shutdown: " + e.getMessage());
+            System.out.println("Remote exception on General Repository shutdown: " + e.getMessage());
             System.exit(1);
         }
     }
