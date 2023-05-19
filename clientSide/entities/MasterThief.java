@@ -3,7 +3,6 @@ package clientSide.entities;
 import interfaces.AssaultPartyInterface;
 import interfaces.CollectionSiteInterface;
 import interfaces.ConcentrationSiteInterface;
-import interfaces.ReturnVoid;
 
 import java.rmi.RemoteException;
 
@@ -148,14 +147,14 @@ public class MasterThief extends Thread {
 
     private void prepareAssaultParty(int assaultParty) {
         System.out.println("initiating prepareAssaultParty " + assaultParty);
-        ReturnVoid ret = null;                                 // return value
+        int ret = 0;                                 // return value
         try {
             ret = concentrationSiteStub.prepareAssaultParty(assaultParty);
         } catch (RemoteException e) {
             System.out.println("Remote exception on prepareAssaultParty: " + e.getMessage());
             System.exit (1);
         }
-        state = ret.getState();
+        state = ret;
         System.out.println("finished prepareAssaultParty " + assaultParty);
     }
 
@@ -200,13 +199,13 @@ public class MasterThief extends Thread {
 
     private void sumUpResults() {
         System.out.println("initiating sumUpResults");
-        ReturnVoid ret = null;                                 // return value
+        int ret = 0;                                 // return value
         try {
             ret = concentrationSiteStub.sumUpResults();
         } catch (RemoteException e) {
             System.out.println("Remote exception on sumUpResults: " + e.getMessage());
             System.exit (1);
         }
-        state = ret.getState();
+        state = ret;
     }
 }

@@ -17,7 +17,7 @@ public interface CollectionSiteInterface extends Remote {
      * sum up results.
      * @return next situation.
      */
-    public char appraiseSit();
+    public char appraiseSit() throws RemoteException;
 
     /**
      * Master Thief waits while there are still Assault Parties in operation.

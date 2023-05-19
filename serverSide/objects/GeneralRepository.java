@@ -311,8 +311,8 @@ public class GeneralRepository implements GeneralRepositoryInterface {
     /**
      * Shuts down the General Repository server.
      */
-    public synchronized void shutdown () {
-        GeneralRepositoryMain.waitConnection = false;
+    public synchronized void shutdown() {
+        GeneralRepositoryMain.shutdown();
     }
 
     private char getSituation(int ordinaryThief) {
