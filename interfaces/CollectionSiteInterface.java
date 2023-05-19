@@ -10,7 +10,7 @@ public interface CollectionSiteInterface extends Remote {
     /**
      * Called by Master Thief to initiate operations.
      */
-    public ReturnVoid startOperations() throws RemoteException;
+    public int startOperations() throws RemoteException;
 
     /**
      * Called by Master Thief to appraise situation: either to take a rest, prepare assault party or
@@ -22,20 +22,20 @@ public interface CollectionSiteInterface extends Remote {
     /**
      * Master Thief waits while there are still Assault Parties in operation.
      */
-    public ReturnVoid takeARest() throws RemoteException;
+    public int takeARest() throws RemoteException;
 
     /**
      * Called by Master Thief to collect all available canvas
      * - Synchronization point between Master Thief and each individual Ordinary Thief with a canvas.
      */
-    public ReturnVoid collectACanvas() throws RemoteException;
+    public int collectACanvas() throws RemoteException;
 
     /**
      * Called by the Ordinary Thief to hand a canvas to the Master Thief if they have any
      * - Synchronization point between each Ordinary Thief and the Master Thief.
      * @param assaultParty the identification of the Assault Party the thief belongs to.
      */
-    public ReturnVoid handACanvas(int assaultParty, int ordinaryThief) throws RemoteException;
+    public int handACanvas(int assaultParty, int ordinaryThief) throws RemoteException;
 
     /**
      * Get the number of the next Assault Party and remove it from the queue.

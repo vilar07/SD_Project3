@@ -113,14 +113,14 @@ public class MasterThief extends Thread {
 
     private void startOperations() {
         System.out.println("startOperations");
-        ReturnVoid ret = null;                                 // return value
+        int ret = 0;                                 // return value
         try {
             ret = collectionSiteStub.startOperations();
         } catch (RemoteException e) {
             System.out.println("Remote exception on startOperations: " + e.getMessage());
             System.exit (1);
         }
-        state = ret.getState();
+        state = ret;
     }
 
     private char appraiseSit() {
@@ -174,27 +174,27 @@ public class MasterThief extends Thread {
 
     private void takeARest() {
         System.out.println("initiating takeARest");
-        ReturnVoid ret = null;                                 // return value
+        int ret = 0;                                 // return value
         try {
             ret = collectionSiteStub.takeARest();
         } catch (RemoteException e) {
             System.out.println("Remote exception on takeARest: " + e.getMessage());
             System.exit (1);
         }
-        state = ret.getState();
+        state = ret;
         System.out.println("finished takeARest");
     }
 
     private void collectACanvas() {
         System.out.println("initiating collectACanvas");
-        ReturnVoid ret = null;                                 // return value
+        int ret = 0;                                 // return value
         try {
             ret = collectionSiteStub.collectACanvas();
         } catch (RemoteException e) {
             System.out.println("Remote exception on collectACanvas: " + e.getMessage());
-            System.exit (1);
+            System.exit(1);
         }
-        state = ret.getState();
+        state = ret;
         System.out.println("finished collectACanvas");
     }
 

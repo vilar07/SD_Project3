@@ -1,5 +1,6 @@
 package serverSide.objects;
 
+import java.rmi.RemoteException;
 import java.util.*;
 
 import clientSide.entities.MasterThief;
@@ -7,6 +8,10 @@ import clientSide.entities.OrdinaryThief;
 import clientSide.stubs.AssaultPartyStub;
 import clientSide.stubs.GeneralRepositoryStub;
 import clientSide.stubs.MuseumStub;
+import interfaces.AssaultPartyInterface;
+import interfaces.CollectionSiteInterface;
+import interfaces.GeneralRepositoryInterface;
+import interfaces.MuseumInterface;
 import serverSide.entities.CollectionSiteProxyAgent;
 import serverSide.main.CollectionSiteMain;
 import utils.Constants;
@@ -14,7 +19,7 @@ import utils.Constants;
 /**
  * Collection Site where intelligence and paintings are stored.
  */
-public class CollectionSite {
+public class CollectionSite implements CollectionSiteInterface {
     /**
      * Number of paintings acquired.
      */
@@ -33,33 +38,34 @@ public class CollectionSite {
     /**
      * FIFOs of the arriving Ordinary Thieves (one for each Assault Party).
      */
-    private final List<Deque<CollectionSiteProxyAgent>> arrivingThieves;
+    private final List<Deque<Integer>> arrivingThieves;
 
     /**
      * The General Repository where logging occurs.
      */
-    private final GeneralRepositoryStub generalRepository;
+    private final GeneralRepositoryInterface generalRepositoryStub;
 
     /**
      * The array holding the Assault Parties shared regions.
      */
-    private final AssaultPartyStub[] assaultParties;
+    private final AssaultPartyInterface[] assaultPartyStubs;
 
     /** 
      * The Museum shared region.
      */
-    private final MuseumStub museum;
+    private final MuseumInterface museumStub;
 
     /**
      * Collection Site constructor.
-     * @param generalRepository the General Repository.
-     * @param assaultParties the Assault Parties.
-     * @param museum the Museum.
+     * @param generalRepositoryStub the General Repository.
+     * @param assaultPartyStubs the Assault Parties.
+     * @param museumStub the Museum.
      */
-    public CollectionSite(GeneralRepositoryStub generalRepository, AssaultPartyStub[] assaultParties, MuseumStub museum) {
-        this.generalRepository = generalRepository;
-        this.assaultParties = assaultParties;
-        this.museum = museum;
+    public CollectionSite(GeneralRepositoryInterface generalRepositoryStub, AssaultPartyInterface[] assaultPartyStubs,
+                          MuseumInterface museumStub) {
+        this.generalRepositoryStub = generalRepositoryStub;
+        this.assaultPartyStubs = assaultPartyStubs;
+        this.museumStub = museumStub;
         paintings = 0;
         emptyRooms = new boolean[Constants.NUM_ROOMS];
         Arrays.fill(emptyRooms, false);
@@ -82,9 +88,9 @@ public class CollectionSite {
     /**
     * This is the first state change in the MasterThief life cycle, it changes the MasterThief state to deciding what to do.
     */
-    public void startOperations() {
-        ((CollectionSiteProxyAgent) Thread.currentThread()).setMasterThiefState(MasterThief.DECIDING_WHAT_TO_DO);
-        generalRepository.setMasterThiefState(((CollectionSiteProxyAgent) Thread.currentThread()).getMasterThiefState());
+    public int startOperations() {
+        setMasterThiefState(MasterThief.DECIDING_WHAT_TO_DO);
+        return MasterThief.DECIDING_WHAT_TO_DO;
     }
 
     /**
@@ -103,8 +109,8 @@ public class CollectionSite {
         }
         List<Integer> assaultPartyRooms = new ArrayList<>();
         int room;
-        for (AssaultPartyStub assaultPartyInterface: assaultParties) {
-            room = assaultPartyInterface.getRoom();
+        for (AssaultPartyInterface assaultPartyInterface: assaultPartyStubs) {
+            room = getAssaultPartyRoom(assaultPartyInterface);
             if (room != -1) {
                 assaultPartyRooms.add(room);
             }
@@ -125,38 +131,34 @@ public class CollectionSite {
     /**
      * Master Thief waits while there are still Assault Parties in operation.
      */
-    public synchronized void takeARest() {
-        CollectionSiteProxyAgent masterThief = (CollectionSiteProxyAgent) Thread.currentThread();
-        masterThief.setMasterThiefState(MasterThief.WAITING_FOR_ARRIVAL);
-        generalRepository.setMasterThiefState(masterThief.getMasterThiefState());
+    public synchronized int takeARest() {
+        setMasterThiefState(MasterThief.WAITING_FOR_ARRIVAL);
         while (this.arrivingThieves.get(0).isEmpty() && this.arrivingThieves.get(1).isEmpty()) {
             try {
                 wait();
-            } catch (InterruptedException ignored) {
-
-            }
+            } catch (InterruptedException ignored) {}
         }
+        return MasterThief.WAITING_FOR_ARRIVAL;
     }
 
     /**
      * Called by the Master Thief to collect all available canvas.
      */
-    public synchronized void collectACanvas() {
-        CollectionSiteProxyAgent masterThief = (CollectionSiteProxyAgent) Thread.currentThread();
+    public synchronized int collectACanvas() {
         for (int i = 0; i < arrivingThieves.size(); i++) {
-            for (CollectionSiteProxyAgent arrivingThief: arrivingThieves.get(i)) {
-                if (assaultParties[i].hasBusyHands(arrivingThief.getOrdinaryThiefID())) {
+            for (int arrivingThief: arrivingThieves.get(i)) {
+                if (hasBusyHands(i, arrivingThief)) {
                     paintings++;
-                    assaultParties[i].setBusyHands(arrivingThief.getOrdinaryThiefID(), false);
+                    setBusyHands(i, arrivingThief);
                 } else {
-                    setEmptyRoom(assaultParties[i].getRoom(), true);
+                    setEmptyRoom(getAssaultPartyRoom(assaultPartyStubs[i]));
                 }
                 arrivingThieves.get(i).remove(arrivingThief); 
-                synchronized (assaultParties[i]) {
-                    assaultParties[i].removeMember(arrivingThief.getOrdinaryThiefID());
-                    if (assaultParties[i].isEmpty()) {
-                        assaultParties[i].setInOperation(false);
-                        generalRepository.disbandAssaultParty(i);
+                synchronized (assaultPartyStubs[i]) {
+                    removeAssaultPartyMember(i, arrivingThief);
+                    if (isAssaultPartyEmpty(i)) {
+                        setAssaultPartyInOperation(i);
+                        disbandAssaultParty(i);
                         if (!availableParties.contains(i)) {
                             availableParties.add(i);
                         }
@@ -165,35 +167,32 @@ public class CollectionSite {
             }
         }
         notifyAll();
-        masterThief.setMasterThiefState(MasterThief.DECIDING_WHAT_TO_DO);
-        generalRepository.setMasterThiefState(masterThief.getMasterThiefState());
+        setMasterThiefState(MasterThief.DECIDING_WHAT_TO_DO);
+        return MasterThief.DECIDING_WHAT_TO_DO;
     }
 
     /**
      * Called by the Ordinary Thief to hand a canvas to the Master Thief if they have any
      * - Synchronization point between each Ordinary Thief and the Master Thief.
-     * @param party the identification of the Assault Party the thief belongs to.
+     * @param assaultParty the identification of the Assault Party the thief belongs to.
      */
-    public synchronized void handACanvas(int party) {
-        CollectionSiteProxyAgent thief = (CollectionSiteProxyAgent) Thread.currentThread();
-        thief.setOrdinaryThiefState(OrdinaryThief.COLLECTION_SITE);
-        generalRepository.setOrdinaryThiefState(thief.getOrdinaryThiefID(), thief.getOrdinaryThiefState(), thief.getOrdinaryThiefSituation(), thief.getOrdinaryThiefMaxDisplacement());
-        this.arrivingThieves.get(party).add(thief);
+    public synchronized int handACanvas(int assaultParty, int ordinaryThief) {
+        setOrdinaryThiefState(ordinaryThief);
+        this.arrivingThieves.get(assaultParty).add(ordinaryThief);
         notifyAll();
-        while (this.arrivingThieves.get(party).contains(thief)) {
+        while (this.arrivingThieves.get(assaultParty).contains(ordinaryThief)) {
             try {
                 wait();
-            } catch (InterruptedException ignored) {
-
-            }
+            } catch (InterruptedException ignored) {}
         }
+        return OrdinaryThief.COLLECTION_SITE;
     }
 
     /**
      * Shuts down the Collection Site server.
      */
     public synchronized void shutdown () {
-        CollectionSiteMain.waitConnection = false;
+        CollectionSiteMain.shutdown();
     }
 
     /**
@@ -223,7 +222,14 @@ public class CollectionSite {
      * @return the distance to the room.
      */
     public int getRoomDistance(int room) {
-        return museum.getRoomDistance(room);
+        int ret = 0;
+        try {
+            ret = museumStub.getRoomDistance(room);
+        } catch (RemoteException e) {
+            System.out.println("Remote exception on CollectionSite.getRoomDistance: " + e.getMessage());
+            System.exit(1);
+        }
+        return ret;
     }
 
     /**
@@ -232,15 +238,109 @@ public class CollectionSite {
      * @return the number of paintings in the room.
      */
     public int getRoomPaintings(int room) {
-        return museum.getRoomPaintings(room);
+        int ret = 0;
+        try {
+            ret = museumStub.getRoomPaintings(room);
+        } catch (RemoteException e) {
+            System.out.println("Remote exception on CollectionSite.getRoomPaintings: " + e.getMessage());
+            System.exit(1);
+        }
+        return ret;
     }
 
     /**
      * Setter for the empty rooms.
+     *
      * @param room the room identification.
-     * @param empty true if it is empty, false otherwise.
      */
-    private void setEmptyRoom(int room, boolean empty) {
-        emptyRooms[room] = empty;
+    private void setEmptyRoom(int room) {
+        emptyRooms[room] = true;
+    }
+
+    private void setMasterThiefState(int state) {
+        try {
+            generalRepositoryStub.setMasterThiefState(state);
+        } catch (RemoteException e) {
+            System.out.println("Remote exception on CollectionSite.setMasterThiefState: " + e.getMessage());
+            System.exit(1);
+        }
+    }
+
+    private void setOrdinaryThiefState(int ordinaryThief) {
+        try {
+            generalRepositoryStub.setOrdinaryThiefState(ordinaryThief, OrdinaryThief.COLLECTION_SITE);
+        } catch (RemoteException e) {
+            System.out.println("Remote exception on CollectionSite.setOrdinaryThiefState: " + e.getMessage());
+            System.exit(1);
+        }
+    }
+
+    private int getAssaultPartyRoom(AssaultPartyInterface assaultParty) {
+        int ret = 0;
+        try {
+            ret = assaultParty.getRoom();
+        } catch (RemoteException e) {
+            System.out.println("Remote exception on CollectionSite.getAssaultPartyRoom: " + e.getMessage());
+            System.exit(1);
+        }
+        return ret;
+    }
+
+    private boolean hasBusyHands(int assaultParty, int ordinaryThief) {
+        boolean ret = false;
+        try {
+            ret = assaultPartyStubs[assaultParty].hasBusyHands(ordinaryThief);
+        } catch (RemoteException e) {
+            System.out.println("Remote exception on CollectionSite.hasBusyHands: " + e.getMessage());
+            System.exit(1);
+        }
+        return ret;
+    }
+
+    private void setBusyHands(int assaultParty, int ordinaryThief) {
+        try {
+            assaultPartyStubs[assaultParty].setBusyHands(ordinaryThief, false);
+        } catch (RemoteException e) {
+            System.out.println("Remote exception on CollectionSite.setBusyHands: " + e.getMessage());
+            System.exit(1);
+        }
+    }
+
+    private void removeAssaultPartyMember(int assaultParty, int ordinaryThief) {
+        try {
+            assaultPartyStubs[assaultParty].removeMember(ordinaryThief);
+        } catch (RemoteException e) {
+            System.out.println("Remote exception on CollectionSite.removeAssaultPartyMember: " + e.getMessage());
+            System.exit(1);
+        }
+    }
+
+    private boolean isAssaultPartyEmpty(int assaultParty) {
+        boolean ret = false;
+        try {
+            ret = assaultPartyStubs[assaultParty].isEmpty();
+        } catch (RemoteException e) {
+            System.out.println("Remote exception on CollectionSite.isAssaultPartyEmpty: " + e.getMessage());
+            System.exit(1);
+        }
+        return ret;
+    }
+
+    private void setAssaultPartyInOperation(int assaultParty) {
+        try {
+            assaultPartyStubs[assaultParty].setInOperation(false);
+        } catch (RemoteException e) {
+            System.out.println("Remote exception on CollectionSite.setAssaultPartyInOperation: " + e.getMessage());
+            System.exit(1);
+        }
+    }
+
+    private void disbandAssaultParty(int assaultParty) {
+        try {
+            generalRepositoryStub.disbandAssaultParty(assaultParty);
+        } catch (RemoteException e) {
+            System.out.println("Remote exception on CollectionSite.disbandAssaultParty: " + e.getMessage());
+            System.exit(1);
+        }
     }
 }
