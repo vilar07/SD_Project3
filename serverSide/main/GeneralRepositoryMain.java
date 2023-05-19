@@ -143,7 +143,7 @@ public class GeneralRepositoryMain {
 
         /* server shutdown */
 
-        boolean shutdownDone = false; // flag signalling the shutdown of the assault party 0 service
+        boolean shutdownDone = false; // flag signalling the shutdown of the general repository service
 
         try {
             reg.unbind(nameEntryObject);

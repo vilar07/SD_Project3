@@ -2,7 +2,6 @@ package serverSide.main;
 
 import interfaces.*;
 import serverSide.objects.*;
-import utils.Constants;
 
 import java.rmi.AlreadyBoundException;
 import java.rmi.NoSuchObjectException;
@@ -11,7 +10,6 @@ import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
-import java.util.Random;
 
 /**
  *    General Repository server of the Heist To The Museum.
@@ -202,7 +200,7 @@ public class CollectionSiteMain {
 
         /* server shutdown */
 
-        boolean shutdownDone = false; // flag signalling the shutdown of the assault party 0 service
+        boolean shutdownDone = false; // flag signalling the shutdown of the collection site service
 
         try {
             reg.unbind(nameEntryObject);
@@ -236,7 +234,7 @@ public class CollectionSiteMain {
                 (Class.forName("serverSide.main.CollectionSiteMain")).notify();
             }
         } catch (ClassNotFoundException e) {
-            System.out.println("The data type CollectionSite was not found (waking up)!");
+            System.out.println("The data type CollectionSiteMain was not found (waking up)!");
             e.printStackTrace();
             System.exit(1);
         }

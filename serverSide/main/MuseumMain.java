@@ -199,7 +199,7 @@ public class MuseumMain {
 
         /* server shutdown */
 
-        boolean shutdownDone = false; // flag signalling the shutdown of the assault party 0 service
+        boolean shutdownDone = false; // flag signalling the shutdown of the museum service
 
         try {
             reg.unbind(nameEntryObject);
