@@ -18,8 +18,7 @@ import java.rmi.server.UnicastRemoteObject;
  *    Implementation of a client-server model of type 2 (server replication).
  *    Communication is based on a communication channel under the TCP protocol.
  */
-public class AssaultParty0Main
-{
+public class AssaultParty0Main {
     /**
      *  Flag signaling the end of operations.
      */
@@ -87,11 +86,11 @@ public class AssaultParty0Main
        try {
            generalRepositoryStub = (GeneralRepositoryInterface) registry.lookup(nameEntryGeneralRepository);
        } catch (RemoteException e) {
-           System.out.println("GeneralRepository lookup exception: " + e.getMessage());
+           System.out.println("General Repository lookup exception: " + e.getMessage());
            e.printStackTrace();
            System.exit(1);
        } catch (NotBoundException e) {
-           System.out.println("GeneralRepository not bound exception: " + e.getMessage());
+           System.out.println("General Repository not bound exception: " + e.getMessage());
            e.printStackTrace();
            System.exit(1);
        }
@@ -104,7 +103,7 @@ public class AssaultParty0Main
        try {
            assaultPartyStub = (AssaultPartyInterface) UnicastRemoteObject.exportObject(assaultParty, portNumb);
        } catch (RemoteException e) {
-           System.out.println("Assault Party stub generation exception: " + e.getMessage());
+           System.out.println("Assault Party 0 stub generation exception: " + e.getMessage());
            e.printStackTrace();
            System.exit(1);
        }
@@ -133,30 +132,30 @@ public class AssaultParty0Main
        try {
            reg.bind(nameEntryObject, assaultPartyStub);
        } catch (RemoteException e) {
-           System.out.println("AssaultParty registration exception: " + e.getMessage());
+           System.out.println("Assault Party 0 registration exception: " + e.getMessage());
            e.printStackTrace();
            System.exit(1);
        } catch (AlreadyBoundException e) {
-           System.out.println("AssaultParty already bound exception: " + e.getMessage());
+           System.out.println("Assault Party 0 already bound exception: " + e.getMessage());
            e.printStackTrace();
            System.exit(1);
        }
-       System.out.println("AssaultParty object was registered!");
+       System.out.println("Assault Party 0 object was registered!");
 
        /* wait for the end of operations */
 
-       System.out.println("AssaultParty is in operation!");
+       System.out.println("Assault Party 0 is in operation!");
        try {
            while (!end)
                 synchronized (Class.forName("serverSide.main.AssaultParty0Main")) {
                     try {
                         (Class.forName("serverSide.main.AssaultParty0Main")).wait();
                     } catch (InterruptedException e) {
-                        System.out.println("AssaultParty main thread was interrupted!");
+                        System.out.println("Assault Party 0 main thread was interrupted!");
                     }
                 }
        } catch (ClassNotFoundException e) {
-           System.out.println("The data type AssaultPartyMain was not found (blocking)!");
+           System.out.println("The data type AssaultParty0Main was not found (blocking)!");
            e.printStackTrace();
            System.exit(1);
        }
@@ -168,26 +167,26 @@ public class AssaultParty0Main
        try {
            reg.unbind(nameEntryObject);
        } catch (RemoteException e) {
-           System.out.println("AssaultParty deregistration exception: " + e.getMessage());
+           System.out.println("Assault Party 0 deregistration exception: " + e.getMessage());
            e.printStackTrace();
            System.exit(1);
        } catch (NotBoundException e) {
-           System.out.println("AssaultParty not bound exception: " + e.getMessage());
+           System.out.println("Assault Party 0 not bound exception: " + e.getMessage());
            e.printStackTrace();
            System.exit(1);
        }
-       System.out.println ("AssaultParty was deregistered!");
+       System.out.println ("Assault Party 0 was deregistered!");
 
        try {
            shutdownDone = UnicastRemoteObject.unexportObject(assaultParty, true);
        } catch (NoSuchObjectException e) {
-           System.out.println("AssaultParty unexport exception: " + e.getMessage());
+           System.out.println("Assault Party 0 unexport exception: " + e.getMessage());
            e.printStackTrace();
            System.exit(1);
        }
 
        if (shutdownDone)
-           System.out.println("AssaultParty was shutdown!");
+           System.out.println("Assault Party 0 was shutdown!");
    }
 
     public static void shutdown() {
@@ -197,7 +196,7 @@ public class AssaultParty0Main
                 (Class.forName("serverSide.main.AssaultParty0Main")).notify();
             }
         } catch (ClassNotFoundException e) {
-            System.out.println("The data type AssaultPartyMain was not found (waking up)!");
+            System.out.println("The data type AssaultParty0Main was not found (waking up)!");
             e.printStackTrace();
             System.exit(1);
         }
