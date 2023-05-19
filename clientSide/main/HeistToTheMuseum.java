@@ -158,6 +158,7 @@ public class HeistToTheMuseum
         for(OrdinaryThief ot: ordinaryThieves) {
             ot.start();
         }
+
         try {
             masterThief.join();
             for(OrdinaryThief ot: ordinaryThieves) {
