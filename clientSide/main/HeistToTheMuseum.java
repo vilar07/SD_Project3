@@ -75,24 +75,35 @@ public class HeistToTheMuseum
         try {
             generalRepositoryStub = (GeneralRepositoryInterface) registry.lookup(nameEntryGeneralRepository);
         } catch (RemoteException e) {
-            System.out.println("GeneralRepository lookup exception: " + e.getMessage());
+            System.out.println("General Repository lookup exception: " + e.getMessage());
             e.printStackTrace();
             System.exit(1);
         } catch (NotBoundException e) {
-            System.out.println("GeneralRepository not bound exception: " + e.getMessage());
+            System.out.println("General Repository not bound exception: " + e.getMessage());
             e.printStackTrace();
             System.exit(1);
         }
 
         try {
             assaultPartyStubs[0] = (AssaultPartyInterface) registry.lookup(nameEntryAssaultParty0);
-            assaultPartyStubs[1] = (AssaultPartyInterface) registry.lookup(nameEntryAssaultParty1);
         } catch (RemoteException e) {
-            System.out.println("AssaultParty lookup exception: " + e.getMessage());
+            System.out.println("Assault Party 0 lookup exception: " + e.getMessage());
             e.printStackTrace();
             System.exit(1);
         } catch (NotBoundException e) {
-            System.out.println("AssaultParty not bound exception: " + e.getMessage());
+            System.out.println("Assault Party 0 not bound exception: " + e.getMessage());
+            e.printStackTrace();
+            System.exit(1);
+        }
+
+        try {
+            assaultPartyStubs[1] = (AssaultPartyInterface) registry.lookup(nameEntryAssaultParty1);
+        } catch (RemoteException e) {
+            System.out.println("Assault Party 1 lookup exception: " + e.getMessage());
+            e.printStackTrace();
+            System.exit(1);
+        } catch (NotBoundException e) {
+            System.out.println("Assault Party 1 not bound exception: " + e.getMessage());
             e.printStackTrace();
             System.exit(1);
         }
@@ -112,11 +123,11 @@ public class HeistToTheMuseum
         try {
             collectionSiteStub = (CollectionSiteInterface) registry.lookup(nameEntryCollectionSite);
         } catch (RemoteException e) {
-            System.out.println("CollectionSite lookup exception: " + e.getMessage());
+            System.out.println("Collection Site lookup exception: " + e.getMessage());
             e.printStackTrace();
             System.exit(1);
         } catch (NotBoundException e) {
-            System.out.println("CollectionSite not bound exception: " + e.getMessage());
+            System.out.println("Collection Site not bound exception: " + e.getMessage());
             e.printStackTrace();
             System.exit(1);
         }
@@ -124,11 +135,11 @@ public class HeistToTheMuseum
         try {
             concentrationSiteStub = (ConcentrationSiteInterface) registry.lookup(nameEntryConcentrationSite);
         } catch (RemoteException e) {
-            System.out.println("ConcentrationSite lookup exception: " + e.getMessage());
+            System.out.println("Concentration Site lookup exception: " + e.getMessage());
             e.printStackTrace();
             System.exit(1);
         } catch (NotBoundException e) {
-            System.out.println("ConcentrationSite not bound exception: " + e.getMessage());
+            System.out.println("Concentration Site not bound exception: " + e.getMessage());
             e.printStackTrace();
             System.exit(1);
         }
@@ -173,11 +184,15 @@ public class HeistToTheMuseum
             System.exit(1);
         }
         try {
-            for (AssaultPartyInterface assaultPartyStub: assaultPartyStubs) {
-                assaultPartyStub.shutdown();
-            }
+            assaultPartyStubs[0].shutdown();
         } catch (RemoteException e) {
-            System.out.println("Remote exception on AssaultParties shutdown: " + e.getMessage());
+            System.out.println("Remote exception on Assault Party 0 shutdown: " + e.getMessage());
+            System.exit(1);
+        }
+        try {
+            assaultPartyStubs[1].shutdown();
+        } catch (RemoteException e) {
+            System.out.println("Remote exception on Assault Party 1 shutdown: " + e.getMessage());
             System.exit(1);
         }
         try {
