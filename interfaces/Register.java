@@ -4,10 +4,9 @@ import java.rmi.*;
 
 /**
  *   Operational interface of a remote object of type RegisterRemoteObject.
- *
+ * <p>
  *     It provides the functionality to register remote objects in the local RMI registry service.
  */
-
 public interface Register extends Remote
 {
   /**
@@ -43,6 +42,5 @@ public interface Register extends Remote
    *    @throws RemoteException if either the invocation of the remote method, or the communication with the registry
    *                            service fails
    */
-
    public void rebind (String name, Remote ref) throws RemoteException;
 }
