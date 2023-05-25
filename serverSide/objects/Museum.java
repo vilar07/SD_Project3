@@ -41,8 +41,10 @@ public class Museum implements MuseumInterface {
     }
 
     /**
-     * The Ordinary Thief tries to roll a canvas.
-     * @param party the party identification.
+     * Roll a canvas.
+     * @param party the identification of the Assault Party
+     * @param ordinaryThief the identification of the Ordinary Thief
+     * @return the updated state of the Ordinary Thief
      */
     public int rollACanvas(int party, int ordinaryThief) {
         setOrdinaryThiefState(ordinaryThief);
@@ -59,9 +61,9 @@ public class Museum implements MuseumInterface {
     }
 
     /**
-     * @param paintings an array with the paintings where the index of the element is the identification of the room
-     * @param distances an array with the distances to a room where the index of the element is the identification of
-     *                  said room
+     * Sets the rooms of the museum.
+     * @param paintings an array with the paintings of each room, where the index is its identification
+     * @param distances an array with the distances to each room, where the index is the identification of the room
      * @throws RemoteException if the execution of the remote code failed
      */
     @Override
@@ -73,30 +75,37 @@ public class Museum implements MuseumInterface {
     }
 
     /**
-     * Shuts down the Museum server.
+     * Sends the shutdown signal to the Museum.
      */
     public synchronized void shutdown () {
         MuseumMain.shutdown();
     }
 
     /**
-     * Getter for the distance to a specific room of the Museum.
-     * @param id the room identification.
-     * @return the distance to the room.
+     * Getter for the number of paintings in a room.
+     * @param id the identification of the room
+     * @return the number of paintings in the room
      */
     public int getRoomDistance(int id) {
         return rooms[id].getDistance();
     }
 
     /**
-     * Getter for the number of paintings in a specific room of the Museum.
-     * @param id the room identification.
-     * @return the number of paintings in the room.
+     * Getter for the number of paintings in a room.
+     * @param id the identification of the room
+     * @return the number of paintings in the room
      */
     public int getRoomPaintings(int id) {
         return rooms[id].getPaintings();
     }
 
+    /**
+     * Calls the remote method setInitialRoomStates on the General Repository.
+     * @param paintings an array with the number of paintings in each room, where the index of the value corresponds
+     *                  to the identification of the room
+     * @param distances an array with the distance to each room, where the index of the value corresponds to the
+     *                  identification of the room
+     */
     private void setInitialRoomStates(int[] paintings, int[] distances) {
         try {
             generalRepositoryStub.setInitialRoomStates(paintings, distances);
@@ -106,6 +115,10 @@ public class Museum implements MuseumInterface {
         }
     }
 
+    /**
+     * Calls the remote method setOrdinaryThiefState on the General Repository.
+     * @param ordinaryThief the identification of the Ordinary Thief
+     */
     private void setOrdinaryThiefState(int ordinaryThief) {
         try {
             generalRepositoryStub.setOrdinaryThiefState(ordinaryThief, OrdinaryThief.AT_A_ROOM);
@@ -115,6 +128,11 @@ public class Museum implements MuseumInterface {
         }
     }
 
+    /**
+     * Calls the remote method getRoom on the Assault Party.
+     * @param assaultParty the identification of the Assault Party
+     * @return the identification of the room
+     */
     private int getAssaultPartyRoom(int assaultParty) {
         int ret = 0;
         try {
@@ -126,6 +144,11 @@ public class Museum implements MuseumInterface {
         return ret;
     }
 
+    /**
+     * Calls the remote method setBusyHands on the Assault Party.
+     * @param assaultParty the identification of the Assault Party
+     * @param ordinaryThief the identification of the Ordinary Thief
+     */
     private void setBusyHands(int assaultParty, int ordinaryThief) {
         try {
             assaultPartyStubs[assaultParty].setBusyHands(ordinaryThief, true);
@@ -135,6 +158,11 @@ public class Museum implements MuseumInterface {
         }
     }
 
+    /**
+     * Calls the remote method setRoomState on the General Repository.
+     * @param room the identification of the room
+     * @param paintings the number of paintings in the room
+     */
     private void setRoomState(int room, int paintings) {
         try {
             generalRepositoryStub.setRoomState(room, paintings);

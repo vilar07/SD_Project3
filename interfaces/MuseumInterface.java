@@ -32,7 +32,7 @@ public interface MuseumInterface extends Remote {
 
     /**
      * Getter for the distance to a room.
-     * @param room the room identification
+     * @param room the identification of the room
      * @return the distance to the room
      * @throws RemoteException if the execution of the remote code failed
      */
@@ -40,7 +40,7 @@ public interface MuseumInterface extends Remote {
 
     /**
      * Getter for the number of paintings in a room.
-     * @param room the room identification
+     * @param room the identification of the room
      * @return the number of paintings in the room
      * @throws RemoteException if the execution of the remote code failed
      */
