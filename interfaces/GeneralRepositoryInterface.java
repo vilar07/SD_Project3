@@ -90,6 +90,8 @@ public interface GeneralRepositoryInterface extends Remote {
      */
     public void setInitialRoomStates(int[] paintings, int[] distances) throws RemoteException;
 
+    public void setAttributesOfOrdinaryThieves(int[] maxDisplacements) throws RemoteException;
+
     /**
      * Sends the shutdown signal to the General Repository.
      */

@@ -145,13 +145,36 @@ public class HeistToTheMuseum
         }
 
         Random random = new Random(System.currentTimeMillis());
+
+        int[] paintings = new int[Constants.NUM_ROOMS];
+        int[] distances = new int[Constants.NUM_ROOMS];
+        for (int i = 0; i < paintings.length; i++) {
+            paintings[i] = Constants.MIN_PAINTINGS +
+                    random.nextInt(Constants.MAX_PAINTINGS - Constants.MIN_PAINTINGS + 1);
+            distances[i] = Constants.MIN_ROOM_DISTANCE +
+                    random.nextInt(Constants.MAX_ROOM_DISTANCE - Constants.MIN_ROOM_DISTANCE + 1);
+        }
+        try {
+            museumStub.setRooms(paintings, distances);
+        } catch (RemoteException e) {
+            System.out.println("Remote exception on setRooms: " + e.getMessage());
+            System.exit (1);
+        }
+
         MasterThief masterThief = new MasterThief(collectionSiteStub, concentrationSiteStub, assaultPartyStubs);
         OrdinaryThief[] ordinaryThieves = new OrdinaryThief[Constants.NUM_THIEVES - 1];
+        int[] maxDisplacements = new int[Constants.NUM_THIEVES - 1];
         for(int i = 0; i < ordinaryThieves.length; i++) {
+            maxDisplacements[i] = random.nextInt(Constants.MAX_THIEF_DISPLACEMENT -
+                    Constants.MIN_THIEF_DISPLACEMENT + 1) + Constants.MIN_THIEF_DISPLACEMENT;
             ordinaryThieves[i] = new OrdinaryThief(i, museumStub, collectionSiteStub, concentrationSiteStub,
-                    assaultPartyStubs, random.nextInt(
-                            Constants.MAX_THIEF_DISPLACEMENT - Constants.MIN_THIEF_DISPLACEMENT + 1
-            ) + Constants.MIN_THIEF_DISPLACEMENT);
+                    assaultPartyStubs, maxDisplacements[i]);
+        }
+        try {
+            generalRepositoryStub.setAttributesOfOrdinaryThieves(maxDisplacements);
+        } catch (RemoteException e) {
+            System.out.println("Remote exception on setAttributesOfOrdinaryThieves: " + e.getMessage());
+            System.exit (1);
         }
 
         masterThief.start();

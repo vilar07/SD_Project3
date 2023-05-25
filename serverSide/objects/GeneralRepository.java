@@ -11,6 +11,8 @@ import utils.Logger;
 import utils.OrdinaryThiefLogging;
 import utils.RoomLogging;
 
+import java.rmi.RemoteException;
+
 /**
  * General Repository where logging occurs.
  */
@@ -306,6 +308,18 @@ public class GeneralRepository implements GeneralRepositoryInterface {
             this.rooms[i].setPaintings(paintings[i]);
         }
         printState();
+    }
+
+    /**
+     * @param maxDisplacements the array with the maximum displacements of the Ordinary Thieves, being the index of each
+     *                         element, the identification of the thief
+     * @throws RemoteException if the execution of the remote code failed
+     */
+    @Override
+    public void setAttributesOfOrdinaryThieves(int[] maxDisplacements) throws RemoteException {
+        for (int i = 0; i < maxDisplacements.length; i++) {
+            setOrdinaryThiefState(i, OrdinaryThief.CONCENTRATION_SITE, maxDisplacements[i]);
+        }
     }
 
     /**

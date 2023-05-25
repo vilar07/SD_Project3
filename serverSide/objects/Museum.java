@@ -34,14 +34,10 @@ public class Museum implements MuseumInterface {
      * Museum constructor, initializes rooms.
      * @param generalRepositoryStub the General Repository.
      */
-    public Museum(GeneralRepositoryInterface generalRepositoryStub, AssaultPartyInterface[] assaultPartyStubs, int[] paintings, int[] distances) {
+    public Museum(GeneralRepositoryInterface generalRepositoryStub, AssaultPartyInterface[] assaultPartyStubs) {
         this.generalRepositoryStub = generalRepositoryStub;
         this.assaultPartyStubs = assaultPartyStubs;
         this.rooms = new Room[Constants.NUM_ROOMS];
-        for (int i = 0; i < this.rooms.length; i++) {
-            this.rooms[i] = new Room(i, distances[i], paintings[i]);
-        }
-        setInitialRoomStates(paintings, distances);
     }
 
     /**
@@ -60,6 +56,20 @@ public class Museum implements MuseumInterface {
             }
         }
         return OrdinaryThief.AT_A_ROOM;
+    }
+
+    /**
+     * @param paintings an array with the paintings where the index of the element is the identification of the room
+     * @param distances an array with the distances to a room where the index of the element is the identification of
+     *                  said room
+     * @throws RemoteException if the execution of the remote code failed
+     */
+    @Override
+    public void setRooms(int[] paintings, int[] distances) throws RemoteException {
+        for (int i = 0; i < this.rooms.length; i++) {
+            this.rooms[i] = new Room(i, distances[i], paintings[i]);
+        }
+        setInitialRoomStates(paintings, distances);
     }
 
     /**

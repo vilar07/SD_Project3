@@ -5,7 +5,6 @@ import interfaces.GeneralRepositoryInterface;
 import interfaces.MuseumInterface;
 import interfaces.Register;
 import serverSide.objects.*;
-import utils.Constants;
 
 import java.rmi.AlreadyBoundException;
 import java.rmi.NoSuchObjectException;
@@ -14,7 +13,6 @@ import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
-import java.util.Random;
 
 /**
  *    General Repository server of the Heist To The Museum.
@@ -127,16 +125,7 @@ public class MuseumMain {
 
         /* instantiate a museum object */
 
-        Random random = new Random(System.currentTimeMillis());
-        int[] paintings = new int[Constants.NUM_ROOMS];
-        int[] distances = new int[Constants.NUM_ROOMS];
-        for (int i = 0; i < paintings.length; i++) {
-            paintings[i] = Constants.MIN_PAINTINGS +
-                    random.nextInt(Constants.MAX_PAINTINGS - Constants.MIN_PAINTINGS + 1);
-            distances[i] = Constants.MIN_ROOM_DISTANCE +
-                    random.nextInt(Constants.MAX_ROOM_DISTANCE - Constants.MIN_ROOM_DISTANCE + 1);
-        }
-        Museum museum = new Museum(generalRepositoryStub, assaultPartyStubs, paintings, distances);
+        Museum museum = new Museum(generalRepositoryStub, assaultPartyStubs);
         MuseumInterface museumStub = null;
         try {
             museumStub = (MuseumInterface) UnicastRemoteObject.exportObject(museum, portNumb);

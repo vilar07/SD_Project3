@@ -14,6 +14,8 @@ public interface MuseumInterface extends Remote {
      */
     public int rollACanvas(int assaultParty, int ordinaryThief) throws RemoteException;
 
+    public void setRooms(int[] paintings, int[] distances) throws RemoteException;
+
     /**
      * Sends the shutdown signal to the Museum.
      */
