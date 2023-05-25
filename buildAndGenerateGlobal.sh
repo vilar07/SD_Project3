@@ -1,6 +1,16 @@
 echo "Compiling source code."
 javac */*.java */*/*.java
 echo "Distributing intermediate code to the different execution environments."
+echo "  RMI registry"
+rm -rf dirRMIRegistry/interfaces
+mkdir -p dirRMIRegistry/interfaces
+cp interfaces/*.class dirRMIRegistry/interfaces
+echo "  Register Remote Objects"
+rm -rf dirRegistry/serverSide dirRegistry/interfaces
+mkdir -p dirRegistry/serverSide dirRegistry/serverSide/main dirRegistry/serverSide/objects dirRegistry/interfaces
+cp serverSide/main/ServerRegisterRemoteObject.class dirRegistry/serverSide/main
+cp serverSide/objects/RegisterRemoteObject.class dirRegistry/serverSide/objects
+cp interfaces/Register.class dirRegistry/interfaces
 echo "  General Repository of Information"
 rm -rf dirGeneralRepos
 mkdir -p dirGeneralRepos/serverSide/main dirGeneralRepos/serverSide/objects \
@@ -77,6 +87,12 @@ cp clientSide/entities/*.class dirClient/clientSide/entities
 cp interfaces/*.class dirClient/interfaces
 cp utils/Constants.class dirClient/utils
 echo "Compressing execution environments."
+echo "  RMI registry"
+rm -f  dirRMIRegistry.zip
+zip -rq dirRMIRegistry.zip dirRMIRegistry
+echo "  Register Remote Objects"
+rm -f  dirRegistry.zip
+zip -rq dirRegistry.zip dirRegistry
 echo "  General Repository of Information"
 rm -f  dirGeneralRepos.zip
 zip -rq dirGeneralRepos.zip dirGeneralRepos
