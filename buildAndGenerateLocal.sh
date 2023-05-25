@@ -12,7 +12,7 @@ cp serverSide/main/ServerRegisterRemoteObject.class dirRegistry/serverSide/main
 cp serverSide/objects/RegisterRemoteObject.class dirRegistry/serverSide/objects
 cp interfaces/Register.class dirRegistry/interfaces
 echo "  General Repository of Information"
-rm -rf dirGeneralRepos
+rm -rf dirGeneralRepos/serverSide dirGeneralRepos/interfaces dirGeneralRepos/utils dirGeneralRepos/clientSide
 mkdir -p dirGeneralRepos/serverSide/main dirGeneralRepos/serverSide/objects \
     dirGeneralRepos/interfaces \
     dirGeneralRepos/utils \
@@ -23,7 +23,7 @@ cp interfaces/*.class dirGeneralRepos/interfaces
 cp clientSide/entities/*.class dirGeneralRepos/clientSide/entities
 cp utils/*.class dirGeneralRepos/utils
 echo "  Assault Party 0"
-rm -rf dirAP0
+rm -rf dirAP0/serverSide dirAP0/interfaces dirAP0/clientSide dirAP0/utils
 mkdir -p dirAP0/serverSide/main dirAP0/serverSide/objects \
     dirAP0/interfaces \
     dirAP0/clientSide/entities \
@@ -34,7 +34,7 @@ cp interfaces/*.class dirAP0/interfaces
 cp clientSide/entities/*.class dirAP0/clientSide/entities
 cp utils/Constants.class utils/Room.class dirAP0/utils
 echo "  Assault Party 1"
-rm -rf dirAP1
+rm -rf dirAP1/serverSide dirAP1/interfaces dirAP1/clientSide dirAP1/utils
 mkdir -p dirAP1/serverSide/main dirAP1/serverSide/objects \
     dirAP1/interfaces \
     dirAP1/clientSide/entities \
@@ -45,7 +45,7 @@ cp interfaces/*.class dirAP1/interfaces
 cp clientSide/entities/*.class dirAP1/clientSide/entities
 cp utils/Constants.class utils/Room.class dirAP1/utils
 echo "  Museum"
-rm -rf dirMuseum
+rm -rf dirMuseum/serverSide dirMuseum/interfaces dirMuseum/clientSide dirMuseum/utils
 mkdir -p dirMuseum/serverSide/main dirMuseum/serverSide/objects \
     dirMuseum/interfaces \
     dirMuseum/clientSide/entities \
@@ -56,7 +56,7 @@ cp interfaces/*.class dirMuseum/interfaces
 cp clientSide/entities/OrdinaryThief.class dirMuseum/clientSide/entities
 cp utils/Constants.class utils/Room.class dirMuseum/utils
 echo "  Collection Site"
-rm -rf dirCollSite
+rm -rf dirCollSite/serverSide dirCollSite/interfaces dirCollSite/clientSide dirCollSite/utils
 mkdir -p dirCollSite/serverSide/main dirCollSite/serverSide/objects \
     dirCollSite/interfaces \
     dirCollSite/clientSide/entities \
@@ -67,7 +67,7 @@ cp interfaces/*.class dirCollSite/interfaces
 cp clientSide/entities/*.class dirCollSite/clientSide/entities
 cp utils/Constants.class dirCollSite/utils
 echo "  Concentration Site"
-rm -rf dirConcSite
+rm -rf dirConcSite/serverSide dirConcSite/interfaces dirConcSite/clientSide dirConcSite/utils
 mkdir -p dirConcSite/serverSide/main dirConcSite/serverSide/objects \
     dirConcSite/interfaces \
     dirConcSite/clientSide/entities \
@@ -78,7 +78,7 @@ cp interfaces/*.class dirConcSite/interfaces
 cp clientSide/entities/*.class dirConcSite/clientSide/entities
 cp utils/Constants.class dirConcSite/utils
 echo "  Client"
-rm -rf dirClient
+rm -rf dirClient/clientSide dirClient/utils dirClient/interfaces
 mkdir -p dirClient/clientSide/main dirClient/clientSide/entities \
     dirClient/utils \
     dirClient/interfaces
