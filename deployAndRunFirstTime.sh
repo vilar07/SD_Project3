@@ -1,7 +1,7 @@
 xterm  -T "RMI registry" -hold -e "./RMIRegistryDeployAndRun.sh" &
-sleep 4
+sleep 8
 xterm  -T "Registry" -hold -e "./RegistryDeployAndRun.sh" &
-sleep 4
+sleep 8
 xterm  -T "General Repository" -hold -e "./GenReposDeployAndRun.sh" &
 sleep 2
 xterm  -T "Assault Party 0" -hold -e "./AP0DeployAndRun.sh" &
