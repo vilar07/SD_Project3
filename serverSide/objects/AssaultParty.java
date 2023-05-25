@@ -79,7 +79,8 @@ public class AssaultParty implements AssaultPartyInterface {
 
     /**
      * Public constructor for the Assault Party shared region.
-     * @param generalRepositoryStub the General Repository.
+     * @param id the identification of the Assault Party
+     * @param generalRepositoryStub the General Repository
      */
     public AssaultParty(int id, GeneralRepositoryInterface generalRepositoryStub) {
         this.id = id;
@@ -96,7 +97,7 @@ public class AssaultParty implements AssaultPartyInterface {
     /**
      * Called by the Master Thief to send the Assault Party to the museum.
      * After that call, Assault Party can start crawling.
-     * @return the state of the Master Thief after this operation.
+     * @return the updated state of the Master Thief
      */
     public synchronized int sendAssaultParty() {
         while (thieves.size() < Constants.ASSAULT_PARTY_SIZE) {
@@ -113,7 +114,10 @@ public class AssaultParty implements AssaultPartyInterface {
 
     /**
      * Called by the Ordinary Thief to crawl in.
-     * @return false if they have finished the crawling.
+     * @param ordinaryThief the identification of the Ordinary Thief
+     * @param maxDisplacement the maximum displacement of the Ordinary Thief
+     * @return a ReturnBoolean reference data type with the value false if they have finished the crawling and the
+     * updated state of the Ordinary Thief
      */
     public synchronized ReturnBoolean crawlIn(int ordinaryThief, int maxDisplacement) {
         setOrdinaryThiefState(ordinaryThief, OrdinaryThief.CRAWLING_INWARDS, maxDisplacement);
@@ -174,7 +178,10 @@ public class AssaultParty implements AssaultPartyInterface {
 
     /**
      * Called by the Ordinary Thief to crawl out.
-     * @return false if they have finished the crawling.
+     * @param ordinaryThief the identification of the Ordinary Thief
+     * @param maxDisplacement the maximum displacement of the Ordinary Thief
+     * @return a ReturnBoolean reference data type with the value false if they have finished the crawling and the
+     * updated state of the Ordinary Thief
      */
     public synchronized ReturnBoolean crawlOut(int ordinaryThief, int maxDisplacement) {
         setOrdinaryThiefState(ordinaryThief, OrdinaryThief.CRAWLING_OUTWARDS, maxDisplacement);
@@ -217,7 +224,7 @@ public class AssaultParty implements AssaultPartyInterface {
     }
 
     /**
-     * Shuts down the Assault Party server.
+     * Sends the shutdown signal to the Assault Party.
      */
     public synchronized void shutdown () {
         if (id == 0) {
@@ -229,7 +236,7 @@ public class AssaultParty implements AssaultPartyInterface {
 
     /**
      * Getter for the room destination.
-     * @return the room identification.
+     * @return the identification of the room
      */
     public int getRoom() {
         if (room == null) {
@@ -239,34 +246,34 @@ public class AssaultParty implements AssaultPartyInterface {
     }
 
     /**
-     * Getter for the assault party identification.
-     * @return the assault party number.
+     * Getter for the identification of the Assault Party.
+     * @return the identification of the Assault Party
      */
     public int getID() {
         return id;
     }
 
     /**
-     * Getter for the inOperation attribute.
-     * @return true if Assault Party is operating, false otherwise.
+     * Getter for if the Assault Party is in operation.
+     * @return true if it is in operation, false otherwise
      */
     public boolean isInOperation() {
         return inOperation;
     }
 
     /**
-     * Setter for the inOperation attribute.
-     * @param inOperation true if Assault Party is operating, false if not.
+     * Sets the Assault Party in operation.
+     * @param inOperation true if the Assault Party is in operation, false otherwise
      */
     public void setInOperation(boolean inOperation) {
         this.inOperation = inOperation;
     }
 
     /**
-     * Setter for the room destination.
-     * @param room the room identification.
-     * @param paintings the number of paintings in the room.
-     * @param distance the distance to the room.
+     * Sets the room destination of the Assault Party.
+     * @param room the identification of the room
+     * @param paintings the number of paintings in the room
+     * @param distance the distance to the room
      */
     public void setRoom(int room, int paintings, int distance) {
         this.room = new Room(room, distance, paintings);
@@ -275,7 +282,7 @@ public class AssaultParty implements AssaultPartyInterface {
 
     /**
      * Sets the members of the Assault Party.
-     * @param thieves array with the Ordinary Thieves' identifications.
+     * @param thieves an array with the identifications of the Ordinary Thieves
      */
     public void setMembers(int[] thieves) {
         this.thieves.clear();
@@ -292,17 +299,17 @@ public class AssaultParty implements AssaultPartyInterface {
     }
 
     /**
-     * Checks if given thief is in the Assault Party.
-     * @param thief the Ordinary Thief identification.
-     * @return true if they are part of the Assault Party, false otherwise.
+     * Checks if a given thief is a member of the Assault Party.
+     * @param thief the identification of the Ordinary Thief
+     * @return true if affirmative, false otherwise
      */
     public boolean isMember(int thief) {
         return thieves.contains(thief);
     }
 
     /**
-     * Removes an Ordinary Thief from the Assault Party, if they are a member of it.
-     * @param thief the Ordinary Thief.
+     * Removes a member from the Assault Party.
+     * @param thief the identification of the Ordinary Thief
      */
     public void removeMember(int thief) {
         if (this.thieves.contains(thief)) {
@@ -312,26 +319,26 @@ public class AssaultParty implements AssaultPartyInterface {
     }
 
     /**
-     * Returns whether the Assault Party is empty, or still has Ordinary Thieves in action.
-     * @return true if it is empty, false otherwise.
+     * Returns whether the Assault Party has no members.
+     * @return true if it is empty, false otherwise
      */
     public boolean isEmpty() {
         return this.thieves.isEmpty();
     }
 
     /**
-     * Sets if an Ordinary Thief has a canvas.
-     * @param thief the identification of the Ordinary Thief.
-     * @param canvas true if the thief has a canvas in its possession, false otherwise.
+     * Setter for the busy hands attribute of a thief.
+     * @param thief the identification of the Ordinary Thief
+     * @param canvas true if they have a canvas, false otherwise
      */
     public void setBusyHands(int thief, boolean canvas) {
         this.thiefCanvas.put(thief, canvas);
     }
 
     /**
-     * Returns whether an Ordinary Thief has a canvas.
-     * @param thief the identification of the Ordinary Thief.
-     * @return true if the thief has a canvas in its possession, false otherwise.
+     * Getter for the busy hands attribute of a thief.
+     * @param thief the identification of the Ordinary Thief
+     * @return whether they have a canvas
      */
     public boolean hasBusyHands(int thief) {
         return this.thiefCanvas.get(thief);
@@ -363,8 +370,9 @@ public class AssaultParty implements AssaultPartyInterface {
 
     /**
      * Returns the maximum possible movement for the Ordinary Thief in the front.
-     * @param ordinaryThief the Ordinary Thief in the front.
-     * @return the maximum possible movement.
+     * @param ordinaryThief the Ordinary Thief in the front
+     * @param maxDisplacement the maximum displacement of the Ordinary Thief
+     * @return the maximum possible movement
      */
     private int crawlFront(int ordinaryThief, int maxDisplacement) {
         int nextThief = getNextInLine(Situation.FRONT);
@@ -377,9 +385,11 @@ public class AssaultParty implements AssaultPartyInterface {
 
     /**
      * Returns the maximum possible movement for the Ordinary Thief in the middle.
-     * @param ordinaryThief the Ordinary Thief in the middle.
-     * @param in true if crawling in, false if crawling out.
-     * @return the maximum possible movement.
+     * @param ordinaryThief the Ordinary Thief in the middle
+     * @param maxDisplacement the maximum displacement of the Ordinary Thief
+     * @param in true if crawling in, false if crawling out
+     * @param goalPosition the position of the room relative to the entrance, or of the entrance
+     * @return the maximum possible movement
      */
     private int crawlMid(int ordinaryThief, int maxDisplacement, boolean in, int goalPosition) {
         int frontThief = getPreviousInLine(Situation.MID);
@@ -410,8 +420,10 @@ public class AssaultParty implements AssaultPartyInterface {
 
     /**
      * Returns the maximum possible movement for the Ordinary Thief in the back.
-     * @param ordinaryThief the Ordinary Thief in the back.
-     * @param in true if crawling in, false if crawling out.
+     * @param ordinaryThief the Ordinary Thief in the back
+     * @param maxDisplacement the maximum displacement of the Ordinary Thief
+     * @param in true if crawling in, false if crawling out
+     * @param goalPosition the position of the room relative to the entrance, or of the entrance
      * @return the maximum possible movement.
      */
     private int crawlBack(int ordinaryThief, int maxDisplacement, boolean in, int goalPosition) {
@@ -450,8 +462,8 @@ public class AssaultParty implements AssaultPartyInterface {
 
     /**
      * Returns the next Ordinary Thief in line to crawl.
-     * @param situation the situation of the current Ordinary Thief.
-     * @return the identification of the next Ordinary Thief.
+     * @param situation the situation of the current Ordinary Thief
+     * @return the identification of the next Ordinary Thief
      */
     private int getPreviousInLine(Situation situation) {
         switch (situation) {
@@ -471,8 +483,8 @@ public class AssaultParty implements AssaultPartyInterface {
 
     /**
      * Returns the next Ordinary Thief in line to crawl.
-     * @param situation the situation of the current Ordinary Thief.
-     * @return the identification of the next Ordinary Thief.
+     * @param situation the situation of the current Ordinary Thief
+     * @return the identification of the next Ordinary Thief
      */
     private int getNextInLine(Situation situation) {
         switch (situation) {
@@ -492,8 +504,8 @@ public class AssaultParty implements AssaultPartyInterface {
 
     /**
      * Returns the situation of the Ordinary Thief in the line of the crawling. The thief can be either in front, mid or back.
-     * @param currentThief the identification of the Ordinary Thief.
-     * @return the situation (FRONT, MID or BACK).
+     * @param currentThief the identification of the Ordinary Thief
+     * @return the situation (FRONT, MID or BACK)
      */
     private Situation whereAmI(int currentThief) {
         if (currentThief == this.thieves.get(0)) {
@@ -504,7 +516,10 @@ public class AssaultParty implements AssaultPartyInterface {
         }
         return Situation.MID;
     }
-    
+
+    /**
+     * Calls the remote method setMasterThiefState on the General Repository
+     */
     private void setMasterThiefState() {
         try {
             generalRepositoryStub.setMasterThiefState(MasterThief.DECIDING_WHAT_TO_DO);
@@ -514,6 +529,12 @@ public class AssaultParty implements AssaultPartyInterface {
         }
     }
 
+    /**
+     * Calls the remote method setOrdinaryThiefState on the General Repository.
+     * @param ordinaryThief the identification of the Ordinary Thief
+     * @param state the state of the Ordinary Thief
+     * @param maxDisplacement the maximum displacement of the Ordinary Thief
+     */
     private void setOrdinaryThiefState(int ordinaryThief, int state, int maxDisplacement) {
         try {
             generalRepositoryStub.setOrdinaryThiefState(ordinaryThief, state, maxDisplacement);
@@ -523,6 +544,12 @@ public class AssaultParty implements AssaultPartyInterface {
         }
     }
 
+    /**
+     * Calls the remote method setAssaultPartyMember on the General Repository.
+     * @param ordinaryThief the identification of the Ordinary Thief
+     * @param position the position of the Ordinary Thief in relation to the room target
+     * @param canvas 1 if the Ordinary Thief is holding a canvas, 0 otherwise
+     */
     private void setAssaultPartyMember(int ordinaryThief, int position, int canvas) {
         try {
             generalRepositoryStub.setAssaultPartyMember(this.id, ordinaryThief, position, canvas);
@@ -532,6 +559,10 @@ public class AssaultParty implements AssaultPartyInterface {
         }
     }
 
+    /**
+     * Calls the remote method setAssaultPartyRoom on the General Repository.
+     * @param room the identification of the room
+     */
     private void setAssaultPartyRoom(int room) {
         try {
             generalRepositoryStub.setAssaultPartyRoom(this.id, room);
@@ -541,6 +572,10 @@ public class AssaultParty implements AssaultPartyInterface {
         }
     }
 
+    /**
+     * Calls the remote method removeAssaultPartyMember on the General Repository.
+     * @param ordinaryThief the identification of the Ordinary Thief
+     */
     private void removeAssaultPartyMember(int ordinaryThief) {
         try {
             generalRepositoryStub.removeAssaultPartyMember(this.id, ordinaryThief);
