@@ -58,7 +58,8 @@ public class ConcentrationSite implements ConcentrationSiteInterface {
      * Called by the master thief, when enough ordinary thieves are available and there is still a
      * room with paintings
      * - Synchronization point between Master Thief and every Ordinary Thief constituting the Assault Party.
-     * @param assaultParty the Assault Party identification.
+     * @param assaultParty the identification of the Assault Party
+     * @return the updated state of the Master Thief
      */
     public int prepareAssaultParty(int assaultParty) {
         setMasterThiefState(MasterThief.ASSEMBLING_A_GROUP);
@@ -85,6 +86,7 @@ public class ConcentrationSite implements ConcentrationSiteInterface {
     /**
      * The Master Thief announces the end of operations
      * and shares the number of paintings acquired in the heist.
+     * @return the updated state of the Master Thief
      */
     public synchronized int sumUpResults() {
         finished = true;
@@ -100,8 +102,10 @@ public class ConcentrationSite implements ConcentrationSiteInterface {
     }
 
     /**
-     * Called by an Ordinary Thief to wait for orders.
-     * @return true if needed, false otherwise.
+     * Called by an ordinary thief to wait for orders.
+     * @param ordinaryThief the identification of the Ordinary Thief
+     * @return a ReturnBoolean reference data type with the value true if the thief is needed or false otherwise, and
+     * the updated state of the Ordinary Thief
      */
     public synchronized ReturnBoolean amINeeded(int ordinaryThief) {
         setOrdinaryThiefState(ordinaryThief);
@@ -123,7 +127,8 @@ public class ConcentrationSite implements ConcentrationSiteInterface {
 
     /**
      * Ordinary Thief waits for the Master Thief to dispatch the designed Assault Party.
-     * @return the Assault Party identification.
+     * @param ordinaryThief the identification of the Ordinary Thief
+     * @return the identification of the Assault Party
      */
     public int prepareExcursion(int ordinaryThief) {
         AssaultPartyInterface assaultParty = assaultPartyStubs[getAssaultParty(ordinaryThief)];
@@ -143,7 +148,7 @@ public class ConcentrationSite implements ConcentrationSiteInterface {
     }
 
     /**
-     * Shuts down the Concentration Site server.
+     * Sends the signal to the Concentration Site.
      */
     public synchronized void shutdown() {
         ConcentrationSiteMain.shutdown();
@@ -151,8 +156,8 @@ public class ConcentrationSite implements ConcentrationSiteInterface {
 
     /**
      * Returns the Assault Party the Ordinary Thief is a part of.
-     * @param ordinaryThief the identification of the Ordinary Thief.
-     * @return the identification of the Assault Party the Ordinary Thief belongs to or -1 if none.
+     * @param ordinaryThief the identification of the Ordinary Thief
+     * @return the identification of the Assault Party the Ordinary Thief belongs to or -1 if none
      */
     private int getAssaultParty(int ordinaryThief) {
         for (AssaultPartyInterface assaultParty: assaultPartyStubs) {
@@ -163,6 +168,10 @@ public class ConcentrationSite implements ConcentrationSiteInterface {
         return -1;
     }
 
+    /**
+     * Calls the remote method setMasterThiefState on the General Repository.
+     * @param state the state of the Master Thief
+     */
     private void setMasterThiefState(int state) {
         try {
             generalRepositoryStub.setMasterThiefState(state);
@@ -172,6 +181,10 @@ public class ConcentrationSite implements ConcentrationSiteInterface {
         }
     }
 
+    /**
+     * Calls the remote method setOrdinaryThiefState on the General Repository.
+     * @param ordinaryThief the identification of the Ordinary Thief
+     */
     private void setOrdinaryThiefState(int ordinaryThief) {
         try {
             generalRepositoryStub.setOrdinaryThiefState(ordinaryThief, OrdinaryThief.CONCENTRATION_SITE);
@@ -181,6 +194,10 @@ public class ConcentrationSite implements ConcentrationSiteInterface {
         }
     }
 
+    /**
+     * Calls the remote method getNextRoom on the Collection Site.
+     * @return the identification of the room
+     */
     private int getNextRoom() {
         int ret = 0;
         try {
@@ -192,6 +209,11 @@ public class ConcentrationSite implements ConcentrationSiteInterface {
         return ret;
     }
 
+    /**
+     * Calls the remote method getRoomDistance on the Collection Site.
+     * @param room the identification of the room
+     * @return the distance to the room
+     */
     private int getRoomDistance(int room) {
         int ret = 0;
         try {
@@ -203,6 +225,11 @@ public class ConcentrationSite implements ConcentrationSiteInterface {
         return ret;
     }
 
+    /**
+     * Calls the remote method getRoomPaintings on the Collection Site.
+     * @param room the identification of the room
+     * @return the number of paintings in the room
+     */
     private int getRoomPaintings(int room) {
         int ret = 0;
         try {
@@ -214,6 +241,13 @@ public class ConcentrationSite implements ConcentrationSiteInterface {
         return ret;
     }
 
+    /**
+     * Calls the remote method setRoom on the Assault Party.
+     * @param assaultParty the identification of the Assault Party
+     * @param room the identification of the room
+     * @param distance the distance to the room
+     * @param paintings the number of paintings in the room
+     */
     private void setAssaultPartyRoom(int assaultParty, int room, int distance, int paintings) {
         try {
             assaultPartyStubs[assaultParty].setRoom(room, distance, paintings);
@@ -223,6 +257,11 @@ public class ConcentrationSite implements ConcentrationSiteInterface {
         }
     }
 
+    /**
+     * Calls the remote method setMembers on the Assault Party.
+     * @param assaultParty the identification of the Assault Party
+     * @param ordinaryThieves an array with the identifications of the Ordinary Thieves
+     */
     private void setAssaultPartyMembers(int assaultParty, int[] ordinaryThieves) {
         try {
             assaultPartyStubs[assaultParty].setMembers(ordinaryThieves);
@@ -232,6 +271,10 @@ public class ConcentrationSite implements ConcentrationSiteInterface {
         }
     }
 
+    /**
+     * Calls the remote method getPaintings on the Collection Site.
+     * @return the number of paintings
+     */
     private int getTotalPaintings() {
         int ret = 0;
         try {
@@ -243,6 +286,10 @@ public class ConcentrationSite implements ConcentrationSiteInterface {
         return ret;
     }
 
+    /**
+     * Calls the remote method printTail on the General Repository.
+     * @param paintings the total number of paintings acquired in the heist
+     */
     private void printRepositoryTail(int paintings) {
         try {
             generalRepositoryStub.printTail(paintings);
@@ -252,6 +299,11 @@ public class ConcentrationSite implements ConcentrationSiteInterface {
         }
     }
 
+    /**
+     * Calls the remote method getID on the Assault Party.
+     * @param assaultParty the interface to the Assault Party
+     * @return the identification of the Assault Party
+     */
     private int getAssaultPartyID(AssaultPartyInterface assaultParty) {
         int ret = 0;
         try {
@@ -263,6 +315,11 @@ public class ConcentrationSite implements ConcentrationSiteInterface {
         return ret;
     }
 
+    /**
+     * Calls the remote method isInOperation on the Assault Party.
+     * @param assaultParty the identification of the Assault Party
+     * @return whether the Assault Party is in operation
+     */
     private boolean isAssaultPartyInOperation(int assaultParty) {
         boolean ret = false;
         try {
@@ -274,6 +331,12 @@ public class ConcentrationSite implements ConcentrationSiteInterface {
         return ret;
     }
 
+    /**
+     * Calls the remote method isMember on the Assault Party.
+     * @param assaultParty the interface to the Assault Party
+     * @param ordinaryThief the identification of the Ordinary Thief
+     * @return whether the Ordinary Thief is a member of the Assault Party
+     */
     private boolean isMemberOfAssaultParty(AssaultPartyInterface assaultParty, int ordinaryThief) {
         boolean ret = false;
         try {
