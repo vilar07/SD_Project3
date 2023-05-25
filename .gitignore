@@ -1,4 +1,7 @@
 .idea/
+*.zip
+*.class
+*/*.class
 **/*.class
 */*/*.class
 *.iml
