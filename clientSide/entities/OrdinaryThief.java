@@ -134,6 +134,7 @@ public class OrdinaryThief extends Thread {
             while(crawlOut(assaultPartyID));
             handACanvas(assaultPartyID);
         }
+        System.out.println("Ordinary Thief " + id + " terminated");
     }
 
     private boolean amINeeded() {

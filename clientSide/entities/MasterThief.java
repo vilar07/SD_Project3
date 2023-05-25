@@ -108,6 +108,7 @@ public class MasterThief extends Thread {
             }
         }
         sumUpResults();
+        System.out.println("Master Thief terminated");
     }
 
     private void startOperations() {
