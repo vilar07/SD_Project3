@@ -74,16 +74,17 @@ public class CollectionSite implements CollectionSiteInterface {
     }
 
     /**
-     * Getter for the number of paintings acquired.
-     * @return the number of paintings.
+     * Getter for the total number of paintings acquired.
+     * @return the total number of paintings
      */
     public int getPaintings() {
         return paintings;
     }
 
     /**
-    * This is the first state change in the MasterThief life cycle, it changes the MasterThief state to deciding what to do.
-    */
+     * Called by Master Thief to initiate operations.
+     * @return the updated state of the Master Thief
+     */
     public int startOperations() {
         setMasterThiefState(MasterThief.DECIDING_WHAT_TO_DO);
         return MasterThief.DECIDING_WHAT_TO_DO;
@@ -92,7 +93,8 @@ public class CollectionSite implements CollectionSiteInterface {
     /**
      * Called by Master Thief to appraise situation: either to take a rest, prepare assault party or
      * sum up results.
-     * @return next situation.
+     * @return the next situation ('P' for preparing a party, 'R' for taking a rest or 'E' to end the heist and sum up
+     * results)
      */
     public synchronized char appraiseSit() {
         boolean empty = true;
@@ -126,6 +128,7 @@ public class CollectionSite implements CollectionSiteInterface {
 
     /**
      * Master Thief waits while there are still Assault Parties in operation.
+     * @return the updated state of the Master Thief
      */
     public synchronized int takeARest() {
         setMasterThiefState(MasterThief.WAITING_FOR_ARRIVAL);
@@ -138,7 +141,9 @@ public class CollectionSite implements CollectionSiteInterface {
     }
 
     /**
-     * Called by the Master Thief to collect all available canvas.
+     * Called by Master Thief to collect all available canvas
+     * - Synchronization point between Master Thief and each individual Ordinary Thief with a canvas.
+     * @return the updated state of the Master Thief
      */
     public synchronized int collectACanvas() {
         for (int i = 0; i < arrivingThieves.size(); i++) {
@@ -170,7 +175,9 @@ public class CollectionSite implements CollectionSiteInterface {
     /**
      * Called by the Ordinary Thief to hand a canvas to the Master Thief if they have any
      * - Synchronization point between each Ordinary Thief and the Master Thief.
-     * @param assaultParty the identification of the Assault Party the thief belongs to.
+     * @param assaultParty the identification of the Assault Party the thief belongs to
+     * @param ordinaryThief the identification of the Ordinary Thief
+     * @return the updated state of the Ordinary Thief
      */
     public synchronized int handACanvas(int assaultParty, int ordinaryThief) {
         setOrdinaryThiefState(ordinaryThief);
@@ -185,7 +192,7 @@ public class CollectionSite implements CollectionSiteInterface {
     }
 
     /**
-     * Shuts down the Collection Site server.
+     * Sends the shutdown signal to the Collection Site.
      */
     public synchronized void shutdown () {
         CollectionSiteMain.shutdown();
@@ -193,15 +200,15 @@ public class CollectionSite implements CollectionSiteInterface {
 
     /**
      * Get the number of the next Assault Party and remove it from the queue.
-     * @return the Assault Party identification.
+     * @return the identification of the Assault Party
      */
     public int getNextAssaultPartyID() {
         return availableParties.poll();
     }
 
     /**
-     * Returns the next empty room. Uses the perception of the Master Thief, not the Museum information.
-     * @return the room.
+     * Gets the next room which is not empty.
+     * @return the identification of the next room
      */
     public int getNextRoom() {
         for (int i = 0; i < emptyRooms.length; i++) {
@@ -214,8 +221,8 @@ public class CollectionSite implements CollectionSiteInterface {
 
     /**
      * Gets the distance to a room.
-     * @param room the room identification.
-     * @return the distance to the room.
+     * @param room the room identification
+     * @return the distance to the room
      */
     public int getRoomDistance(int room) {
         int ret = 0;
@@ -229,9 +236,9 @@ public class CollectionSite implements CollectionSiteInterface {
     }
 
     /**
-     * Gets the number of paintings in a room.
-     * @param room the room identification.
-     * @return the number of paintings in the room.
+     * Gets the number of paintings for a given room.
+     * @param room the room identification
+     * @return the number of paintings
      */
     public int getRoomPaintings(int room) {
         int ret = 0;
@@ -246,13 +253,16 @@ public class CollectionSite implements CollectionSiteInterface {
 
     /**
      * Setter for the empty rooms.
-     *
-     * @param room the room identification.
+     * @param room the identification of the room
      */
     private void setEmptyRoom(int room) {
         emptyRooms[room] = true;
     }
 
+    /**
+     * Calls the remote method setMasterThiefState on the General Repository.
+     * @param state the state of the Master Thief
+     */
     private void setMasterThiefState(int state) {
         try {
             generalRepositoryStub.setMasterThiefState(state);
@@ -262,6 +272,10 @@ public class CollectionSite implements CollectionSiteInterface {
         }
     }
 
+    /**
+     * Calls the remote method setOrdinaryThiefState on the General Repository.
+     * @param ordinaryThief the identification of the Ordinary Thief
+     */
     private void setOrdinaryThiefState(int ordinaryThief) {
         try {
             generalRepositoryStub.setOrdinaryThiefState(ordinaryThief, OrdinaryThief.COLLECTION_SITE);
@@ -271,6 +285,11 @@ public class CollectionSite implements CollectionSiteInterface {
         }
     }
 
+    /**
+     * Calls the remote method getAssaultPartyRoom on the Assault Party.
+     * @param assaultParty the interface to the Assault Party
+     * @return the identification of the room associated with the Assault Party
+     */
     private int getAssaultPartyRoom(AssaultPartyInterface assaultParty) {
         int ret = 0;
         try {
@@ -282,6 +301,12 @@ public class CollectionSite implements CollectionSiteInterface {
         return ret;
     }
 
+    /**
+     * Calls the remote method hasBusyHands on the Assault Party.
+     * @param assaultParty the identification of the Assault Party
+     * @param ordinaryThief the identification of the Ordinary Thief
+     * @return whether the Ordinary Thief has a canvas in their possession
+     */
     private boolean hasBusyHands(int assaultParty, int ordinaryThief) {
         boolean ret = false;
         try {
@@ -293,6 +318,11 @@ public class CollectionSite implements CollectionSiteInterface {
         return ret;
     }
 
+    /**
+     * Calls the remote method setBusyHands on the Assault Party.
+     * @param assaultParty the identification of the Assault Party
+     * @param ordinaryThief the identification of the Ordinary Thief
+     */
     private void setBusyHands(int assaultParty, int ordinaryThief) {
         try {
             assaultPartyStubs[assaultParty].setBusyHands(ordinaryThief, false);
@@ -302,6 +332,11 @@ public class CollectionSite implements CollectionSiteInterface {
         }
     }
 
+    /**
+     * Calls the remote method removeAssaultPartyMember on the Assault Party.
+     * @param assaultParty the identification of the Assault Party
+     * @param ordinaryThief the identification of the Ordinary Thief
+     */
     private void removeAssaultPartyMember(int assaultParty, int ordinaryThief) {
         try {
             assaultPartyStubs[assaultParty].removeMember(ordinaryThief);
@@ -311,6 +346,11 @@ public class CollectionSite implements CollectionSiteInterface {
         }
     }
 
+    /**
+     * Calls the remote method isAssaultPartyEmpty on the Assault Party.
+     * @param assaultParty the identification of the Assault Party
+     * @return whether the Assault Party is empty or not
+     */
     private boolean isAssaultPartyEmpty(int assaultParty) {
         boolean ret = false;
         try {
@@ -322,6 +362,10 @@ public class CollectionSite implements CollectionSiteInterface {
         return ret;
     }
 
+    /**
+     * Calls the remote method setAssaultPartyInOperation on the Assault Party.
+     * @param assaultParty the identification of the Assault Party
+     */
     private void setAssaultPartyInOperation(int assaultParty) {
         try {
             assaultPartyStubs[assaultParty].setInOperation(false);
@@ -331,6 +375,10 @@ public class CollectionSite implements CollectionSiteInterface {
         }
     }
 
+    /**
+     * Calls the remote method disbandAssaultParty on the General Repository.
+     * @param assaultParty the identification of the Assault Party
+     */
     private void disbandAssaultParty(int assaultParty) {
         try {
             generalRepositoryStub.disbandAssaultParty(assaultParty);
