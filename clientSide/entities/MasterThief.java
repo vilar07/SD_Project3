@@ -112,7 +112,7 @@ public class MasterThief extends Thread {
     }
 
     private void startOperations() {
-        System.out.println("startOperations");
+        // System.out.println("startOperations");
         int ret = 0;                                 // return value
         try {
             ret = collectionSiteStub.startOperations();
@@ -124,7 +124,7 @@ public class MasterThief extends Thread {
     }
 
     private char appraiseSit() {
-        System.out.println("appraiseSit");
+        // System.out.println("appraiseSit");
         char ret = 0;                                 // return value
         try {
             ret = collectionSiteStub.appraiseSit();
@@ -147,7 +147,7 @@ public class MasterThief extends Thread {
     }
 
     private void prepareAssaultParty(int assaultParty) {
-        System.out.println("initiating prepareAssaultParty " + assaultParty);
+        // System.out.println("initiating prepareAssaultParty " + assaultParty);
         int ret = 0;                                 // return value
         try {
             ret = concentrationSiteStub.prepareAssaultParty(assaultParty);
@@ -156,11 +156,11 @@ public class MasterThief extends Thread {
             System.exit (1);
         }
         state = ret;
-        System.out.println("finished prepareAssaultParty " + assaultParty);
+        // System.out.println("finished prepareAssaultParty " + assaultParty);
     }
 
     private void sendAssaultParty(int assaultParty) {
-        System.out.println("initiating sendAssaultParty " + assaultParty);
+        // System.out.println("initiating sendAssaultParty " + assaultParty);
         int ret = 0;                                 // return value
         try {
             ret = assaultPartyStubs[assaultParty].sendAssaultParty();
@@ -169,11 +169,11 @@ public class MasterThief extends Thread {
             System.exit (1);
         }
         state = ret;
-        System.out.println("finished sendAssaultParty " + assaultParty);
+        // System.out.println("finished sendAssaultParty " + assaultParty);
     }
 
     private void takeARest() {
-        System.out.println("initiating takeARest");
+        // System.out.println("initiating takeARest");
         int ret = 0;                                 // return value
         try {
             ret = collectionSiteStub.takeARest();
@@ -182,11 +182,11 @@ public class MasterThief extends Thread {
             System.exit (1);
         }
         state = ret;
-        System.out.println("finished takeARest");
+        // System.out.println("finished takeARest");
     }
 
     private void collectACanvas() {
-        System.out.println("initiating collectACanvas");
+        // System.out.println("initiating collectACanvas");
         int ret = 0;                                 // return value
         try {
             ret = collectionSiteStub.collectACanvas();
@@ -195,11 +195,11 @@ public class MasterThief extends Thread {
             System.exit(1);
         }
         state = ret;
-        System.out.println("finished collectACanvas");
+        // System.out.println("finished collectACanvas");
     }
 
     private void sumUpResults() {
-        System.out.println("initiating sumUpResults");
+        // System.out.println("initiating sumUpResults");
         int ret = 0;                                 // return value
         try {
             ret = concentrationSiteStub.sumUpResults();

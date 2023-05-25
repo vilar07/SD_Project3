@@ -138,7 +138,7 @@ public class OrdinaryThief extends Thread {
     }
 
     private boolean amINeeded() {
-        System.out.println("initiating amINeeded");
+        // System.out.println("initiating amINeeded");
         ReturnBoolean ret = null;                                 // return value
         try {
             ret = concentrationSiteStub.amINeeded(id);
@@ -151,7 +151,7 @@ public class OrdinaryThief extends Thread {
     }
 
     private int prepareExcursion() {
-        System.out.println("initiating prepareExcursion");
+        // System.out.println("initiating prepareExcursion");
         int ret = 0;                                 // return value
         try {
             ret = concentrationSiteStub.prepareExcursion(id);
@@ -159,12 +159,12 @@ public class OrdinaryThief extends Thread {
             System.out.println("Remote exception on prepareExcursion: " + e.getMessage());
             System.exit (1);
         }
-        System.out.println("finished prepareExcursion");
+        // System.out.println("finished prepareExcursion");
         return ret;
     }
 
     private boolean crawlIn(int assaultParty) {
-        System.out.println("initiating crawlIn in party " + assaultParty);
+        // System.out.println("initiating crawlIn in party " + assaultParty);
         ReturnBoolean ret = null;                                 // return value
         try {
             ret = assaultPartyStubs[assaultParty].crawlIn(id, maxDisplacement);
@@ -173,12 +173,12 @@ public class OrdinaryThief extends Thread {
             System.exit (1);
         }
         state = ret.getState();
-        System.out.println("finished crawlIn in party " + assaultParty);
+        // System.out.println("finished crawlIn in party " + assaultParty);
         return ret.getValue();
     }
 
     private void rollACanvas(int assaultParty) {
-        System.out.println("initiating rollACanvas in party " + assaultParty);
+        // System.out.println("initiating rollACanvas in party " + assaultParty);
         int ret = 0;                                 // return value
         try {
             ret = museumStub.rollACanvas(assaultParty, id);
@@ -187,22 +187,22 @@ public class OrdinaryThief extends Thread {
             System.exit (1);
         }
         state = ret;
-        System.out.println("finished rollACanvas in party " + assaultParty);
+        // System.out.println("finished rollACanvas in party " + assaultParty);
     }
 
     private void reverseDirection(int assaultParty) {
-        System.out.println("initiating reverseDirection in party " + assaultParty);
+        // System.out.println("initiating reverseDirection in party " + assaultParty);
         try {
             assaultPartyStubs[assaultParty].reverseDirection();
         } catch (RemoteException e) {
             System.out.println("Remote exception on reverseDirection: " + e.getMessage());
             System.exit (1);
         }
-        System.out.println("finished reverseDirection in party " + assaultParty);
+        // System.out.println("finished reverseDirection in party " + assaultParty);
     }
 
     private boolean crawlOut(int assaultParty) {
-        System.out.println("initiating crawlOut in party " + assaultParty);
+        // System.out.println("initiating crawlOut in party " + assaultParty);
         ReturnBoolean ret = null;                                 // return value
         try {
             ret = assaultPartyStubs[assaultParty].crawlOut(id, maxDisplacement);
@@ -211,12 +211,12 @@ public class OrdinaryThief extends Thread {
             System.exit (1);
         }
         state = ret.getState();
-        System.out.println("finished crawlOut in party " + assaultParty);
+        // System.out.println("finished crawlOut in party " + assaultParty);
         return ret.getValue();
     }
 
     private void handACanvas(int assaultParty) {
-        System.out.println("initiating handACanvas in party " + assaultParty);
+        // System.out.println("initiating handACanvas in party " + assaultParty);
         int ret = 0;                                 // return value
         try {
             ret = collectionSiteStub.handACanvas(assaultParty, id);
@@ -225,6 +225,6 @@ public class OrdinaryThief extends Thread {
             System.exit (1);
         }
         state = ret;
-        System.out.println("finished handACanvas in party " + assaultParty);
+        // System.out.println("finished handACanvas in party " + assaultParty);
     }
 }
