@@ -13,6 +13,7 @@ import interfaces.AssaultPartyInterface;
 import interfaces.GeneralRepositoryInterface;
 import interfaces.ReturnBoolean;
 import serverSide.main.AssaultParty0Main;
+import serverSide.main.AssaultParty1Main;
 import utils.Constants;
 import utils.Room;
 
@@ -219,7 +220,11 @@ public class AssaultParty implements AssaultPartyInterface {
      * Shuts down the Assault Party server.
      */
     public synchronized void shutdown () {
-        AssaultParty0Main.shutdown();
+        if (id == 0) {
+            AssaultParty0Main.shutdown();
+        } else {
+            AssaultParty1Main.shutdown();
+        }
     }
 
     /**
