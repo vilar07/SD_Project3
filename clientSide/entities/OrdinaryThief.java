@@ -137,6 +137,9 @@ public class OrdinaryThief extends Thread {
         System.out.println("Ordinary Thief " + id + " terminated");
     }
 
+    /**
+     * Abstraction for the amINeeded remote method invocation of the Concentration Site.
+     */
     private boolean amINeeded() {
         // System.out.println("initiating amINeeded");
         ReturnBoolean ret = null;                                 // return value
@@ -150,6 +153,9 @@ public class OrdinaryThief extends Thread {
         return ret.getValue();
     }
 
+    /**
+     * Abstraction for the prepareExcursion remote method invocation of the Concentration Site.
+     */
     private int prepareExcursion() {
         // System.out.println("initiating prepareExcursion");
         int ret = 0;                                 // return value
@@ -163,6 +169,9 @@ public class OrdinaryThief extends Thread {
         return ret;
     }
 
+    /**
+     * Abstraction for the crawlIn remote method invocation of the Assault Party.
+     */
     private boolean crawlIn(int assaultParty) {
         // System.out.println("initiating crawlIn in party " + assaultParty);
         ReturnBoolean ret = null;                                 // return value
@@ -177,6 +186,9 @@ public class OrdinaryThief extends Thread {
         return ret.getValue();
     }
 
+    /**
+     * Abstraction for the rollACanvas remote method invocation of the Museum.
+     */
     private void rollACanvas(int assaultParty) {
         // System.out.println("initiating rollACanvas in party " + assaultParty);
         int ret = 0;                                 // return value
@@ -190,6 +202,9 @@ public class OrdinaryThief extends Thread {
         // System.out.println("finished rollACanvas in party " + assaultParty);
     }
 
+    /**
+     * Abstraction for the reverseDirection remote method invocation of the Assault Party.
+     */
     private void reverseDirection(int assaultParty) {
         // System.out.println("initiating reverseDirection in party " + assaultParty);
         try {
@@ -201,6 +216,9 @@ public class OrdinaryThief extends Thread {
         // System.out.println("finished reverseDirection in party " + assaultParty);
     }
 
+    /**
+     * Abstraction for the crawlOut remote method invocation of the Assault Party.
+     */
     private boolean crawlOut(int assaultParty) {
         // System.out.println("initiating crawlOut in party " + assaultParty);
         ReturnBoolean ret = null;                                 // return value
@@ -215,6 +233,9 @@ public class OrdinaryThief extends Thread {
         return ret.getValue();
     }
 
+    /**
+     * Abstraction for the handACanvas remote method invocation of the Collection Site.
+     */
     private void handACanvas(int assaultParty) {
         // System.out.println("initiating handACanvas in party " + assaultParty);
         int ret = 0;                                 // return value

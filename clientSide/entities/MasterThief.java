@@ -111,6 +111,9 @@ public class MasterThief extends Thread {
         System.out.println("Master Thief terminated");
     }
 
+    /**
+     * Abstraction for the startOperations remote method invocation of the Collection Site.
+     */
     private void startOperations() {
         // System.out.println("startOperations");
         int ret = 0;                                 // return value
@@ -123,6 +126,9 @@ public class MasterThief extends Thread {
         state = ret;
     }
 
+    /**
+     * Abstraction for the appraiseSit remote method invocation of the Collection Site.
+     */
     private char appraiseSit() {
         // System.out.println("appraiseSit");
         char ret = 0;                                 // return value
@@ -135,6 +141,9 @@ public class MasterThief extends Thread {
         return ret;
     }
 
+    /**
+     * Abstraction for the getNextAssaultPartyID remote method invocation of the Collection Site.
+     */
     private int getNextAssaultPartyID() {
         int ret = 0;                                 // return value
         try {
@@ -146,6 +155,9 @@ public class MasterThief extends Thread {
         return ret;
     }
 
+    /**
+     * Abstraction for the prepareAssaultParty remote method invocation of the Concentration Site.
+     */
     private void prepareAssaultParty(int assaultParty) {
         // System.out.println("initiating prepareAssaultParty " + assaultParty);
         int ret = 0;                                 // return value
@@ -159,6 +171,9 @@ public class MasterThief extends Thread {
         // System.out.println("finished prepareAssaultParty " + assaultParty);
     }
 
+    /**
+     * Abstraction for the sendAssaultParty remote method invocation of the Assault Party.
+     */
     private void sendAssaultParty(int assaultParty) {
         // System.out.println("initiating sendAssaultParty " + assaultParty);
         int ret = 0;                                 // return value
@@ -172,6 +187,9 @@ public class MasterThief extends Thread {
         // System.out.println("finished sendAssaultParty " + assaultParty);
     }
 
+    /**
+     * Abstraction for the takeARest remote method invocation of the Collection Site.
+     */
     private void takeARest() {
         // System.out.println("initiating takeARest");
         int ret = 0;                                 // return value
@@ -185,6 +203,9 @@ public class MasterThief extends Thread {
         // System.out.println("finished takeARest");
     }
 
+    /**
+     * Abstraction for the collectACanvas remote method invocation of the Collection Site.
+     */
     private void collectACanvas() {
         // System.out.println("initiating collectACanvas");
         int ret = 0;                                 // return value
@@ -198,6 +219,9 @@ public class MasterThief extends Thread {
         // System.out.println("finished collectACanvas");
     }
 
+    /**
+     * Abstraction for the sumUpResults remote method invocation of the Concentration Site.
+     */
     private void sumUpResults() {
         // System.out.println("initiating sumUpResults");
         int ret = 0;                                 // return value
