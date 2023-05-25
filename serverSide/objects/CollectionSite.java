@@ -286,7 +286,7 @@ public class CollectionSite implements CollectionSiteInterface {
     }
 
     /**
-     * Calls the remote method getAssaultPartyRoom on the Assault Party.
+     * Calls the remote method getRoom on the Assault Party.
      * @param assaultParty the interface to the Assault Party
      * @return the identification of the room associated with the Assault Party
      */
@@ -333,7 +333,7 @@ public class CollectionSite implements CollectionSiteInterface {
     }
 
     /**
-     * Calls the remote method removeAssaultPartyMember on the Assault Party.
+     * Calls the remote method removeMember on the Assault Party.
      * @param assaultParty the identification of the Assault Party
      * @param ordinaryThief the identification of the Ordinary Thief
      */
@@ -347,7 +347,7 @@ public class CollectionSite implements CollectionSiteInterface {
     }
 
     /**
-     * Calls the remote method isAssaultPartyEmpty on the Assault Party.
+     * Calls the remote method isEmpty on the Assault Party.
      * @param assaultParty the identification of the Assault Party
      * @return whether the Assault Party is empty or not
      */
@@ -363,7 +363,7 @@ public class CollectionSite implements CollectionSiteInterface {
     }
 
     /**
-     * Calls the remote method setAssaultPartyInOperation on the Assault Party.
+     * Calls the remote method setInOperation on the Assault Party.
      * @param assaultParty the identification of the Assault Party
      */
     private void setAssaultPartyInOperation(int assaultParty) {

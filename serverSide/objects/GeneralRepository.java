@@ -116,7 +116,7 @@ public class GeneralRepository implements GeneralRepositoryInterface {
 
     /**
      * Prints the tail of the logging file.
-     * @param total number of paintings acquired.
+     * @param total number of paintings acquired
      */
     public void printTail(int total) {
         logger.print(String.format("My friends, tonight's effort produced %2d priceless paintings!\n", total));
@@ -125,7 +125,7 @@ public class GeneralRepository implements GeneralRepositoryInterface {
 
     /**
      * Sets the Master Thief state.
-     * @param state the state code to change to.
+     * @param state the state code to change to
      */
     public void setMasterThiefState(int state) {
         switch (state) {
@@ -151,10 +151,10 @@ public class GeneralRepository implements GeneralRepositoryInterface {
     }
 
     /**
-     * Sets the Ordinary Thief state (version 1).
-     * @param id the identification of the thief.
-     * @param state the state code to change to.
-     * @param maxDisplacement the maximum displacement of the thief.
+     * Sets the Ordinary Thief state.
+     * @param id the identification of the thief
+     * @param state the state code to change to
+     * @param maxDisplacement the maximum displacement of the thief
      */
     public void setOrdinaryThiefState(int id, int state, int maxDisplacement) {
         switch (state) {
@@ -181,8 +181,8 @@ public class GeneralRepository implements GeneralRepositoryInterface {
 
     /**
      * Sets the Ordinary Thief state (version 2).
-     * @param id the identification of the thief.
-     * @param state the state code to change to.
+     * @param id the identification of the thief
+     * @param state the state code to change to
      */
     public void setOrdinaryThiefState(int id, int state) {
         switch (state) {
@@ -208,8 +208,8 @@ public class GeneralRepository implements GeneralRepositoryInterface {
 
     /**
      * Sets the Assault Party room target.
-     * @param party the party number.
-     * @param room the room identification.
+     * @param party the party number
+     * @param room the room identification
      */
     public void setAssaultPartyRoom(int party, int room) {
         assaultParties[party].setRoom((char) (room + 1 + '0'));
@@ -218,10 +218,10 @@ public class GeneralRepository implements GeneralRepositoryInterface {
 
     /**
      * Sets an Assault Party member.
-     * @param party the party number.
-     * @param thief the identification of the thief.
-     * @param pos the present position of the thief.
-     * @param cv 1 if the thief is carrying a canvas, 0 otherwise.
+     * @param party the party number
+     * @param thief the identification of the thief
+     * @param pos the present position of the thief
+     * @param cv 1 if the thief is carrying a canvas, 0 otherwise
      */
     public void setAssaultPartyMember(int party, int thief, int pos, int cv) {
         AssaultPartyElemLogging[] elems = assaultParties[party].getElems();
@@ -245,8 +245,8 @@ public class GeneralRepository implements GeneralRepositoryInterface {
 
     /**
      * Removes an Assault Party member.
-     * @param party the identification of the Assault Party.
-     * @param thief the identification of the Ordinary Thief.
+     * @param party the identification of the Assault Party
+     * @param thief the identification of the Ordinary Thief
      */
     public void removeAssaultPartyMember(int party, int thief) {
         AssaultPartyElemLogging[] elems = assaultParties[party].getElems();
@@ -263,7 +263,7 @@ public class GeneralRepository implements GeneralRepositoryInterface {
 
     /**
      * Resets the Assault Party logging details.
-     * @param party the party number.
+     * @param party the party number
      */
     public void disbandAssaultParty(int party) {
         assaultParties[party].setRoom('-');
@@ -278,9 +278,9 @@ public class GeneralRepository implements GeneralRepositoryInterface {
 
     /**
      * Sets the room state.
-     * @param id the room identification.
-     * @param paintings the number of paintings.
-     * @param distance the distance to the outside gathering site.
+     * @param id the room identification
+     * @param paintings the number of paintings
+     * @param distance the distance to the outside gathering site
      */
     public void setRoomState(int id, int paintings, int distance) {
         rooms[id].setPaintings(paintings);
@@ -290,8 +290,8 @@ public class GeneralRepository implements GeneralRepositoryInterface {
 
     /**
      * Sets the room state.
-     * @param id the room identification.
-     * @param paintings the number of paintings.
+     * @param id the room identification
+     * @param paintings the number of paintings
      */
     public void setRoomState(int id, int paintings) {
         setRoomState(id, paintings, rooms[id].getDistance());
@@ -299,8 +299,8 @@ public class GeneralRepository implements GeneralRepositoryInterface {
 
     /**
      * Sets the initial room states.
-     * @param paintings an array with the rooms' paintings.
-     * @param distances an array with the distance to the rooms.
+     * @param paintings an array with the number of paintings of each room
+     * @param distances an array with the distance to each room
      */
     public void setInitialRoomStates(int[] paintings, int[] distances) {
         for (int i = 0; i < this.rooms.length; i++) {
@@ -311,8 +311,9 @@ public class GeneralRepository implements GeneralRepositoryInterface {
     }
 
     /**
-     * @param maxDisplacements the array with the maximum displacements of the Ordinary Thieves, being the index of each
-     *                         element, the identification of the thief
+     * Sets the initial attributes of the thieves.
+     * @param maxDisplacements an array with the maximum displacements of the Ordinary Thieves, where the index of each
+     *                         value is the identification of the thief
      * @throws RemoteException if the execution of the remote code failed
      */
     @Override
@@ -323,12 +324,17 @@ public class GeneralRepository implements GeneralRepositoryInterface {
     }
 
     /**
-     * Shuts down the General Repository server.
+     * Sends the shutdown signal to the General Repository.
      */
     public synchronized void shutdown() {
         GeneralRepositoryMain.shutdown();
     }
 
+    /**
+     * Returns the situation of a given Ordinary Thief
+     * @param ordinaryThief the identification of the Ordinary Thief
+     * @return 'P' if the Ordinary Thief is in a party, 'W' otherwise
+     */
     private char getSituation(int ordinaryThief) {
         String ordinaryThiefState = ordinaryThieves[ordinaryThief].getState();
         return (ordinaryThiefState.equals("CONC") || ordinaryThiefState.equals("COLL")) ? 'W' : 'P';
