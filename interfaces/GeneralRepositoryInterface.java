@@ -108,7 +108,7 @@ public interface GeneralRepositoryInterface extends Remote {
      *                         value is the identification of the thief
      * @throws RemoteException if the execution of the remote code failed
      */
-    void setAttributesOfOrdinaryThieves(int[] maxDisplacements) throws RemoteException;
+    void setInitialThieves(int[] maxDisplacements) throws RemoteException;
 
     /**
      * Sends the shutdown signal to the General Repository.

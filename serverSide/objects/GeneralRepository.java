@@ -317,10 +317,14 @@ public class GeneralRepository implements GeneralRepositoryInterface {
      * @throws RemoteException if the execution of the remote code failed
      */
     @Override
-    public void setAttributesOfOrdinaryThieves(int[] maxDisplacements) throws RemoteException {
+    public void setInitialThieves(int[] maxDisplacements) throws RemoteException {
+        this.masterThiefState = "PLAN";
         for (int i = 0; i < maxDisplacements.length; i++) {
-            setOrdinaryThiefState(i, OrdinaryThief.CONCENTRATION_SITE, maxDisplacements[i]);
+            this.ordinaryThieves[i].setState("CONC");
+            this.ordinaryThieves[i].setSituation('W');
+            this.ordinaryThieves[i].setMaxDisplacement((char) (maxDisplacements[i] + '0'));
         }
+        printState();
     }
 
     /**

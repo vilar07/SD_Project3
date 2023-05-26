@@ -171,7 +171,7 @@ public class HeistToTheMuseum
                     assaultPartyStubs, maxDisplacements[i]);
         }
         try {
-            generalRepositoryStub.setAttributesOfOrdinaryThieves(maxDisplacements);
+            generalRepositoryStub.setInitialThieves(maxDisplacements);
         } catch (RemoteException e) {
             System.out.println("Remote exception on setAttributesOfOrdinaryThieves: " + e.getMessage());
             System.exit (1);
